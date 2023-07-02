@@ -18,60 +18,55 @@ import java.util.Objects;
 @Transactional
 public class QuizServiceImpl implements QuizService {
 
+    private final ObjectMapper objectMapper;
+
     private final QuizRepository quizRepository;
 
     private final QuizQueryService quizQueryService;
 
-    private final ObjectMapper objectMapper;
-
     public QuizServiceImpl(
-            QuizRepository quizRepository,
             ObjectMapper objectMapper,
+            QuizRepository quizRepository,
             QuizQueryService quizQueryService
     ) {
-        this.quizRepository = quizRepository;
         this.objectMapper = objectMapper;
+        this.quizRepository = quizRepository;
         this.quizQueryService = quizQueryService;
     }
 
     @Override
     public Quiz createQuiz(CreateQuizCommand command) {
-        if (!command.validateCreateData()) {
-            throw new DataFormatException("Thông tin nhập vào không hợp lệ");
+        if (!command.isValidData()) {
+            throw new DataFormatException("Data not valid");
         }
+
         Quiz quiz = objectMapper.convertValue(command, Quiz.class);
+
         return quizRepository.save(quiz);
     }
 
     @Override
-    public Quiz updateQuiz(UpdateQuizCommand updateCommand) {
-        Quiz existedQuiz = quizQueryService.getQuizById(updateCommand.getId());
+    public Quiz updateQuiz(UpdateQuizCommand command) {
 
-        if (Objects.nonNull(updateCommand.getQuestion())) {
-            existedQuiz.setQuestion(updateCommand.getQuestion());
+        Quiz existedQuiz = quizQueryService.getById(command.getId());
+
+        if (Objects.nonNull(command.getTitle())) {
+            existedQuiz.setTitle(command.getTitle());
         }
 
-        if (Objects.nonNull(updateCommand.getType())) {
-            existedQuiz.setType(updateCommand.getType());
+        if (Objects.nonNull(command.getDescription())) {
+            existedQuiz.setDescription(command.getDescription());
         }
 
-        if (Objects.nonNull(updateCommand.getDifficultlyLevel())) {
-            existedQuiz.setDifficultlyLevel(updateCommand.getDifficultlyLevel());
-        }
-
-        if (Objects.nonNull(updateCommand.getNumOfCorrectAnswer())) {
-            existedQuiz.setNumOfCorrectAnswer(updateCommand.getNumOfCorrectAnswer());
-        }
-
-        if (Objects.nonNull(updateCommand.getAnswers())) {
-            existedQuiz.setAnswers(updateCommand.getAnswers());
+        if (Objects.nonNull(command.getQuestions())) {
+            existedQuiz.setQuestions(command.getQuestions());
         }
 
         return quizRepository.save(existedQuiz);
     }
 
     @Override
-    public void deleteQuiz(ObjectId id) {
+    public void delete(ObjectId id) {
         quizRepository.deleteById(id);
     }
 }

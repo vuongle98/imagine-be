@@ -1,25 +1,23 @@
 package com.vuongle.imagine.services.share.quiz;
 
+import com.vuongle.imagine.dto.quiz.QuizResult;
+import com.vuongle.imagine.dto.quiz.UserCheckQuiz;
 import com.vuongle.imagine.models.Quiz;
+import com.vuongle.imagine.services.share.BaseService;
 import com.vuongle.imagine.services.share.quiz.query.QuizQuery;
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface QuizQueryService {
-    Optional<Quiz> findQuizById(ObjectId id);
+public interface QuizQueryService extends BaseService<QuizQuery> {
 
-    Quiz getQuizById(ObjectId id);
+    Quiz getById(ObjectId id);
 
-    Page<Quiz> findPageQuiz(QuizQuery quizQuery, Pageable pageable);
+    List<Quiz> findList(QuizQuery quizQuery);
 
-    Page<Quiz> findPageQuiz(QuizQuery quizQuery, Pageable pageable, AggregationOperation ...aggregationOperationInputs);
+    Page<Quiz> findPage(QuizQuery quizQuery, Pageable pageable);
 
-    List<Quiz> findListQuiz(QuizQuery quizQuery);
-
-    long countByCriteria(QuizQuery quizQuery);
+    QuizResult checkAnswer(ObjectId quizId, List<UserCheckQuiz> answers);
 }

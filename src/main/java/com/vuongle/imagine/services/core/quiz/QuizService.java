@@ -6,9 +6,10 @@ import com.vuongle.imagine.services.core.quiz.command.UpdateQuizCommand;
 import org.bson.types.ObjectId;
 
 public interface QuizService {
-    Quiz createQuiz(CreateQuizCommand quizCommand);
 
-    Quiz updateQuiz(UpdateQuizCommand quizCommand);
+    Quiz createQuiz(CreateQuizCommand command);
 
-    void deleteQuiz(ObjectId id);
+    Quiz updateQuiz(UpdateQuizCommand command);
+
+    void delete(ObjectId id);
 }

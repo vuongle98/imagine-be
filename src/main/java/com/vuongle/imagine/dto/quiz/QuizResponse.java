@@ -1,5 +1,7 @@
-package com.vuongle.imagine.models;
+package com.vuongle.imagine.dto.quiz;
 
+import com.vuongle.imagine.models.Question;
+import com.vuongle.imagine.models.User;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,34 +17,28 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.List;
 
-@Document("quiz")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Quiz implements Serializable {
+@Document("quiz")
+public class QuizResponse implements Serializable {
 
     @Id
     private ObjectId id;
 
-    private List<ObjectId> listQuestionId;
+    private List<QuestionResponse> questions;
 
-    private List<Question> questions;
-
-    @Size(min = 2, max = 100, message = "The title must be between 2 and 100 messages.")
     private String title;
 
-    @Size(max = 500, message = "The description can't be longer than 500 characters.")
     private String description;
 
     private Integer numOfQuestion;
 
     private boolean isPublished;
 
-    @CreatedDate
     private Instant createdDate;
 
-    @LastModifiedDate
     private Instant updatedDate;
 
     private User createdBy;

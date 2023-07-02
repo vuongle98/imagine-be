@@ -1,19 +1,17 @@
 package com.vuongle.imagine.services.core.quiz.command;
 
-import com.vuongle.imagine.models.Question;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 
 import java.io.Serializable;
-import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
-@Data
 @ToString
-@NoArgsConstructor
+@Data
+@SuperBuilder
 @AllArgsConstructor
-public class UpdateQuizCommand extends CreateQuizCommand implements Serializable {
+@NoArgsConstructor
+public class UpdateQuestionCommand extends CreateQuestionCommand implements Serializable {
     private ObjectId id;
-
-    private List<Question> questions;
 }
