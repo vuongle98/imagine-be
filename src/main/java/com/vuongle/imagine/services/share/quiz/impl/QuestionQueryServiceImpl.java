@@ -180,6 +180,10 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
             listAndCriteria.add(Criteria.where("difficultlyLevel").is(questionQuery.getDifficultlyLevel()));
         }
 
+        if (Objects.nonNull(questionQuery.getCategory())) {
+            listAndCriteria.add(Criteria.where("category").is(questionQuery.getCategory()));
+        }
+
 //        if (Objects.nonNull(questionQuery.getNumOfCorrectAnswer())) {
 //            listAndCriteria.add(Criteria.where("numOfCorrectAnswer").is(questionQuery.getNumOfCorrectAnswer()));
 //        }

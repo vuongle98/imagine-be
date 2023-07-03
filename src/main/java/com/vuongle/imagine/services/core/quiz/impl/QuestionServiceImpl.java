@@ -77,6 +77,10 @@ public class QuestionServiceImpl implements QuestionService {
             existedQuestion.setAnswers(updateCommand.getAnswers());
         }
 
+        if (Objects.nonNull(updateCommand.getCategory())) {
+            existedQuestion.setCategory(updateCommand.getCategory());
+        }
+
         return questionRepository.save(existedQuestion);
     }
 

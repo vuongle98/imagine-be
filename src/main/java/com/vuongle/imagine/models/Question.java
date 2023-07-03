@@ -1,6 +1,7 @@
 package com.vuongle.imagine.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.vuongle.imagine.constants.QuestionCategory;
 import com.vuongle.imagine.constants.QuestionType;
 import com.vuongle.imagine.dto.quiz.UserCheckQuiz;
 import com.vuongle.imagine.models.embeded.Answer;
@@ -40,6 +41,8 @@ public class Question implements Serializable {
     private Integer difficultlyLevel = 1;
 
     private List<Answer> correctAnswer;
+
+    private QuestionCategory category;
 
     private User createdBy;
 

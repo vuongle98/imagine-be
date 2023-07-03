@@ -1,5 +1,6 @@
 package com.vuongle.imagine.services.core.quiz.command;
 
+import com.vuongle.imagine.constants.QuestionCategory;
 import com.vuongle.imagine.constants.QuestionType;
 import com.vuongle.imagine.models.embeded.Answer;
 import lombok.AllArgsConstructor;
@@ -29,6 +30,8 @@ public class CreateQuestionCommand implements Serializable {
     private boolean mark;
 
     private Integer difficultlyLevel = 1;
+
+    private QuestionCategory category;
 
     public boolean validateCreateData() {
         return title != null && answers != null && !answers.isEmpty();
