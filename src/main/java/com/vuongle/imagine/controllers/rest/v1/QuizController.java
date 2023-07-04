@@ -72,7 +72,7 @@ public class QuizController {
         return ResponseEntity.ok(quiz);
     }
 
-    @PutMapping("/{id}/answer")
+    @PostMapping("/{id}/answer")
     public ResponseEntity<QuizResult> answerQuiz(
             @PathVariable(value = "id") ObjectId id,
             @RequestBody @Valid List<UserCheckQuiz> checkQuiz
