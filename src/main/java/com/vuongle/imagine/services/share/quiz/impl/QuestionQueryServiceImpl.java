@@ -184,6 +184,10 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
             listAndCriteria.add(Criteria.where("category").is(questionQuery.getCategory()));
         }
 
+        if (Objects.nonNull(questionQuery.getType())) {
+            listAndCriteria.add(Criteria.where("type").is(questionQuery.getType()));
+        }
+
 //        if (Objects.nonNull(questionQuery.getNumOfCorrectAnswer())) {
 //            listAndCriteria.add(Criteria.where("numOfCorrectAnswer").is(questionQuery.getNumOfCorrectAnswer()));
 //        }

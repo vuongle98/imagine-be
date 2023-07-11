@@ -32,7 +32,9 @@ public class Question implements Serializable {
 
     private String title;
 
-    private boolean active;
+    private String description;
+
+    private boolean active = true;
 
     private List<Answer> answers;
 
@@ -42,7 +44,7 @@ public class Question implements Serializable {
 
     private List<Answer> correctAnswer;
 
-    private QuestionCategory category;
+    private QuestionCategory category = QuestionCategory.GENERAL;
 
     private User createdBy;
 

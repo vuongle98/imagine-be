@@ -1,5 +1,6 @@
 package com.vuongle.imagine.models;
 
+import com.vuongle.imagine.dto.crawl.NeedCrawlData;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,7 +36,7 @@ public class Quiz implements Serializable {
     @Size(max = 500, message = "The description can't be longer than 500 characters.")
     private String description;
 
-    private Integer numOfQuestion;
+    private String imagePath;
 
     private boolean isPublished;
 
@@ -46,4 +47,12 @@ public class Quiz implements Serializable {
     private Instant updatedDate;
 
     private User createdBy;
+
+    public Quiz(NeedCrawlData needCrawlData) {
+        this.title = needCrawlData.getTitle();
+        this.description = needCrawlData.getDescription();
+        this.listQuestionId = needCrawlData.getListQuestionId();
+        this.isPublished = needCrawlData.isPublished();
+        this.imagePath = needCrawlData.getImagePath();
+    }
 }

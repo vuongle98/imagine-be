@@ -1,6 +1,7 @@
 package com.vuongle.imagine.services.share.quiz.query;
 
 import com.vuongle.imagine.constants.QuestionCategory;
+import com.vuongle.imagine.constants.QuestionType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,5 +27,7 @@ public class QuestionQuery {
 
     private Integer numOfCorrectAnswer;
     private QuestionCategory category;
+
+    private QuestionType type;
 
 }

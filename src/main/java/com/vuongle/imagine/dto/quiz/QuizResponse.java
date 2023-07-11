@@ -33,6 +33,8 @@ public class QuizResponse implements Serializable {
 
     private String description;
 
+    private String imagePath;
+
     private Integer numOfQuestion;
 
     private boolean isPublished;

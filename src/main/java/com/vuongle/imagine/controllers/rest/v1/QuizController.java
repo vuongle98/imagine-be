@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -39,7 +40,9 @@ public class QuizController {
     public ResponseEntity<Page<QuizResponse>> findPage(
             QuizQuery quizQuery,
             Pageable pageable
-    ) {
+    ) throws InterruptedException {
+
+        Thread.sleep(300);
         Page<QuizResponse> quizPage = quizQueryService.findPage(quizQuery, pageable, QuizResponse.class);
 
         return ResponseEntity.ok(quizPage);
