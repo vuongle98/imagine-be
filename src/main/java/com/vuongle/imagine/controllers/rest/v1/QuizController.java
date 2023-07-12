@@ -14,9 +14,9 @@ import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -37,6 +37,7 @@ public class QuizController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
     public ResponseEntity<Page<QuizResponse>> findPage(
             QuizQuery quizQuery,
             Pageable pageable
@@ -49,6 +50,7 @@ public class QuizController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
     public ResponseEntity<Quiz> createQuiz(
             @Valid @RequestBody CreateQuizCommand command
     ) {
@@ -58,6 +60,7 @@ public class QuizController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
     public ResponseEntity<QuizResponse> getDetail(
             @PathVariable(value = "id") ObjectId id
     ) {
@@ -65,6 +68,7 @@ public class QuizController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
     public ResponseEntity<Quiz> updateQuiz(
             @PathVariable(value = "id") ObjectId id,
             @RequestBody @Valid UpdateQuizCommand updateQuizCommand
@@ -76,6 +80,7 @@ public class QuizController {
     }
 
     @PostMapping("/{id}/answer")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
     public ResponseEntity<QuizResult> answerQuiz(
             @PathVariable(value = "id") ObjectId id,
             @RequestBody @Valid List<UserCheckQuiz> checkQuiz
@@ -86,6 +91,7 @@ public class QuizController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MODERATOR')")
     public ResponseEntity<Void> deleteQuiz(
             @PathVariable(value = "id") ObjectId id
     ) {

@@ -1,6 +1,5 @@
 package com.vuongle.imagine.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vuongle.imagine.constants.QuestionCategory;
 import com.vuongle.imagine.constants.QuestionType;
 import com.vuongle.imagine.dto.quiz.UserCheckQuiz;
@@ -10,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -46,7 +46,8 @@ public class Question implements Serializable {
 
     private QuestionCategory category = QuestionCategory.GENERAL;
 
-    private User createdBy;
+    @CreatedBy
+    private String createdBy;
 
     @CreatedDate
     private Instant createdDate;
@@ -56,7 +57,7 @@ public class Question implements Serializable {
 
     public Integer checkAnswer(UserCheckQuiz checkQuiz) {
         int correct = 0;
-        for (Answer answer: correctAnswer) {
+        for (Answer answer : correctAnswer) {
             if (checkQuiz.getAnswerIds().stream().anyMatch(answerId -> answerId.equals(answer.getId()))) {
                 correct += 1;
             }

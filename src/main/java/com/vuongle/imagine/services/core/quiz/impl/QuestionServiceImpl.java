@@ -46,7 +46,7 @@ public class QuestionServiceImpl implements QuestionService {
 
         List<Answer> correctAnswer = new ArrayList<>();
 
-        for (Answer answer: command.getAnswers()) {
+        for (Answer answer : command.getAnswers()) {
             if (answer.isCorrect()) {
                 correctAnswer.add(answer);
             }

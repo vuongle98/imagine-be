@@ -7,7 +7,6 @@ import com.vuongle.imagine.services.core.auth.command.LoginCommand;
 import com.vuongle.imagine.services.core.auth.command.SignupCommand;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

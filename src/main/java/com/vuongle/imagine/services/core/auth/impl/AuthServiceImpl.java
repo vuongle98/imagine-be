@@ -1,14 +1,12 @@
 package com.vuongle.imagine.services.core.auth.impl;
 
 import com.vuongle.imagine.dto.auth.JwtResponse;
-import com.vuongle.imagine.dto.common.MessageResponse;
 import com.vuongle.imagine.models.User;
 import com.vuongle.imagine.repositories.UserRepository;
 import com.vuongle.imagine.services.core.auth.AuthService;
 import com.vuongle.imagine.services.core.auth.command.LoginCommand;
 import com.vuongle.imagine.services.core.auth.command.SignupCommand;
-import com.vuongle.imagine.services.core.auth.jwt.JwtUtils;
-import org.springframework.http.ResponseEntity;
+import com.vuongle.imagine.utils.JwtUtils;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,7 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -61,6 +58,7 @@ public class AuthServiceImpl implements AuthService {
                 "Bearer",
                 userDetails.getId(),
                 userDetails.getUsername(),
+                userDetails.getFullName(),
                 userDetails.getEmail(),
                 roles
         );

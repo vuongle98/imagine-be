@@ -1,12 +1,16 @@
 package com.vuongle.imagine.controllers.rest.v1;
 
+import com.vuongle.imagine.models.File;
+import com.vuongle.imagine.services.core.storage.FileService;
 import com.vuongle.imagine.services.share.storage.FileQueryService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -18,16 +22,30 @@ public class FileServiceController {
 
     private final FileQueryService fileQueryService;
 
+    private final FileService fileService;
+
     @Value("${imagine.root.file.path}")
     private String IMAGINE_ROOT_FILE_PATH;
 
     public FileServiceController(
-            FileQueryService fileQueryService
+            FileQueryService fileQueryService,
+            FileService fileService
     ) {
         this.fileQueryService = fileQueryService;
+        this.fileService = fileService;
+    }
+
+    @PostMapping("/upload")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
+    public ResponseEntity<File> upload(
+            @RequestParam(value = "file")MultipartFile file
+            ) {
+        File fileInfo = this.fileService.upload(file);
+        return ResponseEntity.ok(fileInfo);
     }
 
     @GetMapping("/download")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
     public ResponseEntity<Resource> download(
             @RequestParam(value = "file-path") String filePath
     ) throws IOException {
@@ -54,6 +72,7 @@ public class FileServiceController {
     }
 
     @GetMapping("/download-byte")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
     public ResponseEntity<byte[]> downloadAsByteArray(
             @RequestParam(value = "file-path") String filePath
     ) throws IOException {

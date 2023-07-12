@@ -2,7 +2,6 @@ package com.vuongle.imagine.dto.quiz;
 
 import com.vuongle.imagine.constants.QuestionType;
 import com.vuongle.imagine.models.User;
-import com.vuongle.imagine.models.embeded.Answer;
 import com.vuongle.imagine.models.embeded.BaseAnswer;
 import lombok.AllArgsConstructor;
 import lombok.Data;

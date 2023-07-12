@@ -1,4 +1,4 @@
-package com.vuongle.imagine.services.core.auth.jwt;
+package com.vuongle.imagine.utils;
 
 import com.vuongle.imagine.services.core.auth.impl.UserDetailsImpl;
 import io.jsonwebtoken.*;

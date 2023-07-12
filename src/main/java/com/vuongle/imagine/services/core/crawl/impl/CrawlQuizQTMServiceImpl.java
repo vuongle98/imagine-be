@@ -44,9 +44,9 @@ public class CrawlQuizQTMServiceImpl implements CrawlQuizQTMService {
     private String IMAGING_ROOT_FILE_PATH;
 
     public CrawlQuizQTMServiceImpl(
-        QuizService quizService,
-        QuizRepository quizRepository,
-        QuestionRepository questionRepository
+            QuizService quizService,
+            QuizRepository quizRepository,
+            QuestionRepository questionRepository
     ) {
         this.quizService = quizService;
         this.quizRepository = quizRepository;
@@ -58,7 +58,7 @@ public class CrawlQuizQTMServiceImpl implements CrawlQuizQTMService {
         List<NeedCrawlData> needCrawlDataList = new ArrayList<>();
         Document document = Jsoup.connect(url).get();
         Elements elements = document.getElementsByClass("listitem");
-        for (Element element: elements) {
+        for (Element element : elements) {
             NeedCrawlData needCrawlData = new NeedCrawlData();
             Elements headInfo = element.getElementsByTag("h3");
             if (Objects.nonNull(headInfo.first())) {
@@ -92,9 +92,9 @@ public class CrawlQuizQTMServiceImpl implements CrawlQuizQTMService {
                     String ext = splitUrl.get(splitUrl.size() - 1);
 
                     String imageName = StorageUtils.buildPathFromName(needCrawlData.getTitle(), ext);
-                    System.out.println(imageName);
+
                     try (InputStream in = new URL(imgUrl).openStream()) {
-                        Path imagePath = Paths.get(IMAGING_ROOT_FILE_PATH, STORE_IMAGE_PATH, StorageUtils.buildDateFilePath(), imageName);
+                        Path imagePath = Paths.get(IMAGING_ROOT_FILE_PATH, StorageUtils.buildDateFilePath(), imageName);
                         StorageUtils.createFile(in, imagePath);
                         needCrawlData.setImagePath(imagePath.toString());
                     }
@@ -112,7 +112,7 @@ public class CrawlQuizQTMServiceImpl implements CrawlQuizQTMService {
         List<Question> questions = new ArrayList<>();
         Document document = Jsoup.connect(needCrawlData.getUrl()).get();
         Elements elements = document.getElementsByClass("quiz-section");
-        for (Element element: elements) {
+        for (Element element : elements) {
             Question question = new Question();
             List<Answer> answers = new ArrayList<>();
             Element titleNode = element.getElementsByClass("quiz-section-title").first();
@@ -138,7 +138,7 @@ public class CrawlQuizQTMServiceImpl implements CrawlQuizQTMService {
 
                 Elements answerNodes = contentNode.getElementsByClass("list-item");
 
-                for (Element answerItem: answerNodes) {
+                for (Element answerItem : answerNodes) {
                     Answer answer = new Answer();
                     Element answerDesc = answerItem.getElementsByClass("answer-desc").first();
 
@@ -172,7 +172,7 @@ public class CrawlQuizQTMServiceImpl implements CrawlQuizQTMService {
 
     @Override
     public void saveQuiz(List<NeedCrawlData> needCrawlDataList) throws IOException {
-        for (NeedCrawlData needCrawlData: needCrawlDataList) {
+        for (NeedCrawlData needCrawlData : needCrawlDataList) {
             Quiz quiz = new Quiz(needCrawlData);
             List<Question> questions = crawlQuestion(needCrawlData);
             questions = this.questionRepository.saveAll(questions);

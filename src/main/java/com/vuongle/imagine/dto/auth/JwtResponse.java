@@ -16,7 +16,7 @@ public class JwtResponse implements Serializable {
     private String type = "Bearer";
     private ObjectId id;
     private String username;
+    private String fullName;
     private String email;
     private List<String> roles;
-
 }

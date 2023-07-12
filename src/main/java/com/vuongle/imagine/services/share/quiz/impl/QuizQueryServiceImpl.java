@@ -122,9 +122,9 @@ public class QuizQueryServiceImpl implements QuizQueryService {
 
         Integer totalCorrect = 0;
 
-        for (Question question: existedQuiz.getQuestions()) {
+        for (Question question : existedQuiz.getQuestions()) {
 
-            for (UserCheckQuiz checkQuiz: answers) {
+            for (UserCheckQuiz checkQuiz : answers) {
                 if (question.getId().equals(checkQuiz.getQuestionId())) {
                     Integer correctNum = question.checkAnswer(checkQuiz);
                     totalCorrect += correctNum;

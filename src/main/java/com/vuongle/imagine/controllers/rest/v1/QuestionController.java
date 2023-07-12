@@ -13,6 +13,7 @@ import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -33,6 +34,7 @@ public class QuestionController {
     }
 
     @GetMapping()
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
     public ResponseEntity<Page<QuestionResponse>> findAllQuestion(
             HttpServletRequest request,
             QuestionQuery questionQuery,
@@ -43,6 +45,7 @@ public class QuestionController {
     }
 
     @PostMapping()
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
     public ResponseEntity<Question> createQuestion(
             HttpServletRequest request,
             @RequestBody @Valid CreateQuestionCommand createCommand
@@ -53,6 +56,7 @@ public class QuestionController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
     public ResponseEntity<QuestionResponse> getDetail(
             @PathVariable(value = "id") ObjectId id
     ) {
@@ -60,6 +64,7 @@ public class QuestionController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
     public ResponseEntity<Question> updateQuestion(
             @PathVariable(value = "id") ObjectId id,
             @RequestBody @Valid UpdateQuestionCommand updateQuizCommand
@@ -71,6 +76,7 @@ public class QuestionController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MODERATOR')")
     public ResponseEntity<Void> deleteQuestion(
             @PathVariable(value = "id") ObjectId id
     ) {

@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -46,7 +47,8 @@ public class Quiz implements Serializable {
     @LastModifiedDate
     private Instant updatedDate;
 
-    private User createdBy;
+    @CreatedBy
+    private String createdBy;
 
     public Quiz(NeedCrawlData needCrawlData) {
         this.title = needCrawlData.getTitle();

@@ -2,6 +2,7 @@ package com.vuongle.imagine.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vuongle.imagine.constants.UserRole;
+import com.vuongle.imagine.services.core.auth.impl.UserDetailsImpl;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -62,5 +64,16 @@ public class User implements Serializable {
         this.email = email;
         this.password = password;
         this.roles = new HashSet<>(roles);
+    }
+
+    public User(UserDetailsImpl userDetail) {
+        this.id = userDetail.getId();
+        this.username = userDetail.getUsername();
+        this.fullName = userDetail.getFullName();
+        this.email = userDetail.getEmail();
+        this.roles = new HashSet<>(userDetail.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .map((UserRole::valueOf))
+                .toList());
     }
 }

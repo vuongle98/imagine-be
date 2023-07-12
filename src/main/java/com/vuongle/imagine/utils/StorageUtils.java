@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -34,18 +35,17 @@ public class StorageUtils {
         return false;
     }
 
-    public static boolean createFile(InputStream in, Path imagePath) {
+    public static long createFile(InputStream in, Path imagePath) {
         try {
             if (!Files.exists(imagePath)) {
                 Files.createDirectories(imagePath.getParent());
             }
-            Files.copy(in, imagePath);
-            return true;
+            return Files.copy(in, imagePath, StandardCopyOption.REPLACE_EXISTING);
         } catch (Exception ex) {
             System.out.println("Error saving file " + ex);
         }
 
-        return false;
+        return 0;
     }
 
     public static String buildPathFromName(String name) {
@@ -60,14 +60,17 @@ public class StorageUtils {
             buildedString = splitByDot.get(0);
         }
 
-        List<String> splitData = Arrays.asList(buildedString.split(" "));
-        return StringUtils.join(splitData.stream().filter(item -> !item.equals("-")).collect(Collectors.toList()), "-") + "." + ext;
+        return buildFileName(buildedString)  + "." + ext;
     }
 
     public static String buildPathFromName(String name, String ext) {
         name = com.vuongle.imagine.utils.StringUtils.removeAccents(name);
         name = com.vuongle.imagine.utils.StringUtils.preprocessFilePath(name);
         name = name.replace("-", "");
+        return buildFileName(name)  + "." + ext;
+    }
+
+    private static String buildFileName(String name) {
         List<String> splitData = Arrays.asList(name.split(" "));
         return StringUtils.join(splitData.stream()
                 .filter(item -> !item.equals("-"))
@@ -75,6 +78,6 @@ public class StorageUtils {
                 .filter(item -> !item.isEmpty())
                 .map(String::toLowerCase)
                 .map(String::trim)
-                .collect(Collectors.toList()), "-") + "." + ext;
+                .collect(Collectors.toList()), "-");
     }
 }
