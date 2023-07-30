@@ -1,4 +1,4 @@
-package com.vuongle.imagine.controllers.rest.v1;
+package com.vuongle.imagine.controllers.admin.v1;
 
 import com.vuongle.imagine.models.File;
 import com.vuongle.imagine.services.core.storage.FileService;
@@ -16,9 +16,9 @@ import java.io.IOException;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("/api/file")
+@RequestMapping("/api/admin/file")
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowCredentials="true")
-public class FileServiceController {
+public class AdminFileServiceController {
 
     private final FileQueryService fileQueryService;
 
@@ -27,7 +27,7 @@ public class FileServiceController {
     @Value("${imagine.root.file.path}")
     private String IMAGINE_ROOT_FILE_PATH;
 
-    public FileServiceController(
+    public AdminFileServiceController(
             FileQueryService fileQueryService,
             FileService fileService
     ) {
@@ -36,7 +36,7 @@ public class FileServiceController {
     }
 
     @PostMapping("/upload")
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MODERATOR')")
     public ResponseEntity<File> upload(
             @RequestParam(value = "file")MultipartFile file
             ) {
@@ -45,7 +45,7 @@ public class FileServiceController {
     }
 
     @GetMapping("/download")
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MODERATOR')")
     public ResponseEntity<Resource> download(
             @RequestParam(value = "file-path") String filePath
     ) throws IOException {
@@ -72,7 +72,7 @@ public class FileServiceController {
     }
 
     @GetMapping("/download-byte")
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MODERATOR')")
     public ResponseEntity<byte[]> downloadAsByteArray(
             @RequestParam(value = "file-path") String filePath
     ) throws IOException {

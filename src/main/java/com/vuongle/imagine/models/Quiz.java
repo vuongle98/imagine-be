@@ -1,5 +1,7 @@
 package com.vuongle.imagine.models;
 
+import com.vuongle.imagine.constants.QuizCategory;
+import com.vuongle.imagine.constants.QuizLevel;
 import com.vuongle.imagine.dto.crawl.NeedCrawlData;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -39,7 +41,7 @@ public class Quiz implements Serializable {
 
     private String imagePath;
 
-    private boolean isPublished;
+    private boolean published;
 
     @CreatedDate
     private Instant createdDate;
@@ -50,11 +52,19 @@ public class Quiz implements Serializable {
     @CreatedBy
     private String createdBy;
 
+    private Integer countDown;
+
+    private QuizCategory category;
+
+    private QuizLevel level;
+
+    private boolean mark;
+
     public Quiz(NeedCrawlData needCrawlData) {
         this.title = needCrawlData.getTitle();
         this.description = needCrawlData.getDescription();
         this.listQuestionId = needCrawlData.getListQuestionId();
-        this.isPublished = needCrawlData.isPublished();
+        this.published = needCrawlData.isPublished();
         this.imagePath = needCrawlData.getImagePath();
     }
 }

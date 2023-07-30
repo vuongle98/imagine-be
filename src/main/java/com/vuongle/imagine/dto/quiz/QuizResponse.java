@@ -39,5 +39,7 @@ public class QuizResponse implements Serializable {
 
     private Instant updatedDate;
 
-    private User createdBy;
+    private String createdBy;
+
+    private Integer countDown;
 }

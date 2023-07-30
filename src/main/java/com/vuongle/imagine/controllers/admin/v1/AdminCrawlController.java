@@ -1,4 +1,4 @@
-package com.vuongle.imagine.controllers.rest.v1;
+package com.vuongle.imagine.controllers.admin.v1;
 
 import com.vuongle.imagine.dto.crawl.NeedCrawlData;
 import com.vuongle.imagine.services.core.crawl.CrawlQuizQTMService;
@@ -10,13 +10,13 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/crawler")
+@RequestMapping("/api/admin/crawler")
 @CrossOrigin(origins = "http://localhost:4200")
-public class CrawlController {
+public class AdminCrawlController {
 
     private final CrawlQuizQTMService crawlQuizQTMService;
 
-    public CrawlController(
+    public AdminCrawlController(
             CrawlQuizQTMService crawlQuizQTMService
     ) {
         this.crawlQuizQTMService = crawlQuizQTMService;

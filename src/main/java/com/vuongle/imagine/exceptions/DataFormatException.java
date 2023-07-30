@@ -1,5 +1,9 @@
 package com.vuongle.imagine.exceptions;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(code = HttpStatus.BAD_REQUEST)
 public class DataFormatException extends RuntimeException {
 
     public DataFormatException() {

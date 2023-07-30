@@ -1,6 +1,7 @@
 package com.vuongle.imagine.services.core.quiz.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vuongle.imagine.constants.QuestionType;
 import com.vuongle.imagine.exceptions.DataFormatException;
 import com.vuongle.imagine.models.Question;
 import com.vuongle.imagine.models.embeded.Answer;
@@ -44,6 +45,10 @@ public class QuestionServiceImpl implements QuestionService {
         }
         Question question = objectMapper.convertValue(command, Question.class);
 
+        if (Objects.equals(question.getType(), QuestionType.YES_NO) && question.getAnswers().stream().filter(Answer::isCorrect).count() > 1) {
+            throw new DataFormatException("Câu hỏi yes/no chỉ có 1 câu trả lời đúng");
+        }
+
         List<Answer> correctAnswer = new ArrayList<>();
 
         for (Answer answer : command.getAnswers()) {
@@ -60,6 +65,10 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public Question updateQuestion(UpdateQuestionCommand updateCommand) {
         Question existedQuestion = questionQueryService.getQuestionById(updateCommand.getId());
+
+        if (Objects.equals(updateCommand.getType(), QuestionType.YES_NO) && updateCommand.getAnswers().stream().filter(Answer::isCorrect).count() > 1) {
+            throw new DataFormatException("Câu hỏi yes/no chỉ có 1 câu trả lời đúng");
+        }
 
         if (Objects.nonNull(updateCommand.getTitle())) {
             existedQuestion.setTitle(updateCommand.getTitle());
@@ -81,11 +90,22 @@ public class QuestionServiceImpl implements QuestionService {
             existedQuestion.setCategory(updateCommand.getCategory());
         }
 
+        if (Objects.nonNull(updateCommand.getCountDown())) {
+            existedQuestion.setCountDown(updateCommand.getCountDown());
+        }
+
+        if (Objects.nonNull(updateCommand.getMark())) {
+            existedQuestion.setMark(updateCommand.getMark());
+        }
+
+        // call update all quiz
+
         return questionRepository.save(existedQuestion);
     }
 
     @Override
     public void deleteQuestion(ObjectId id) {
+        // delete from quiz
         questionRepository.deleteById(id);
     }
 }

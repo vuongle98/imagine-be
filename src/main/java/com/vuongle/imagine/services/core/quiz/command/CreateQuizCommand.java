@@ -1,6 +1,9 @@
 package com.vuongle.imagine.services.core.quiz.command;
 
 
+import com.vuongle.imagine.constants.QuizCategory;
+import com.vuongle.imagine.constants.QuizLevel;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -28,10 +31,17 @@ public class CreateQuizCommand implements Serializable {
     @Size(max = 500, message = "The description can't be longer than 500 characters.")
     private String description;
 
-    private boolean isPublished = false;
+    private boolean published;
 
-    public boolean isValidData() {
-        return Objects.nonNull(listQuestionId) && Objects.nonNull(title);
+    private Integer countDown = 30;
+
+    private QuizCategory category = QuizCategory.GENERAL;
+
+    private QuizLevel level = QuizLevel.EASY;
+
+    private boolean mark;
+
+    public boolean isValidateData() {
+        return !listQuestionId.isEmpty() && Objects.nonNull(title) && !title.isEmpty();
     }
-
 }

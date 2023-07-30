@@ -1,12 +1,14 @@
 package com.vuongle.imagine.services.core.auth.impl;
 
+import com.vuongle.imagine.constants.UserRole;
 import com.vuongle.imagine.dto.auth.JwtResponse;
 import com.vuongle.imagine.models.User;
 import com.vuongle.imagine.repositories.UserRepository;
 import com.vuongle.imagine.services.core.auth.AuthService;
 import com.vuongle.imagine.services.core.auth.command.LoginCommand;
-import com.vuongle.imagine.services.core.auth.command.SignupCommand;
+import com.vuongle.imagine.services.core.auth.command.RegisterCommand;
 import com.vuongle.imagine.utils.JwtUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
     private final AuthenticationManager authenticationManager;
@@ -28,18 +31,6 @@ public class AuthServiceImpl implements AuthService {
 
     private final JwtUtils jwtUtils;
 
-    public AuthServiceImpl(
-            AuthenticationManager authenticationManager,
-            UserRepository userRepository,
-            PasswordEncoder passwordEncoder,
-            JwtUtils jwtUtils
-    ) {
-        this.authenticationManager = authenticationManager;
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtUtils = jwtUtils;
-    }
-
     @Override
     public JwtResponse login(LoginCommand command) {
         Authentication authentication = authenticationManager.authenticate(
@@ -48,24 +39,32 @@ public class AuthServiceImpl implements AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        User userDetails = (User) authentication.getPrincipal();
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .toList();
 
-        return new JwtResponse(
-                jwt,
-                "Bearer",
-                userDetails.getId(),
-                userDetails.getUsername(),
-                userDetails.getFullName(),
-                userDetails.getEmail(),
-                roles
-        );
+        return JwtResponse.builder()
+                .token(jwt)
+                .type("Bearer")
+                .id(userDetails.getId())
+                .username(userDetails.getUsername())
+                .fullName(userDetails.getFullName())
+                .roles(roles).build();
+
+//        return new JwtResponse(
+//                jwt,
+//                "Bearer",
+//                userDetails.getId(),
+//                userDetails.getUsername(),
+//                userDetails.getFullName(),
+//                userDetails.getEmail(),
+//                roles
+//        );
     }
 
     @Override
-    public User signUp(SignupCommand command) {
+    public User register(RegisterCommand command) {
         if (userRepository.existsByUsername(command.getUsername())) {
             return null;
         }
@@ -79,7 +78,7 @@ public class AuthServiceImpl implements AuthService {
                 command.getFullName(),
                 command.getEmail(),
                 passwordEncoder.encode(command.getPassword()),
-                command.getRoles()
+                List.of(UserRole.USER)
         );
 
         user = userRepository.save(user);

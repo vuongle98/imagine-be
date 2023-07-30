@@ -1,4 +1,4 @@
-package com.vuongle.imagine.services.core.auth.jwt;
+package com.vuongle.imagine.config.jwt;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

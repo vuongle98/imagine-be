@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/quiz")
-@CrossOrigin(origins = "http://localhost:4200")
+@RequestMapping("/api/quiz")
+@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowCredentials="true")
 public class QuizController {
 
     private final QuizQueryService quizQueryService;
@@ -49,34 +49,12 @@ public class QuizController {
         return ResponseEntity.ok(quizPage);
     }
 
-    @PostMapping
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
-    public ResponseEntity<Quiz> createQuiz(
-            @Valid @RequestBody CreateQuizCommand command
-    ) {
-        Quiz quiz = quizService.createQuiz(command);
-
-        return ResponseEntity.ok(quiz);
-    }
-
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
     public ResponseEntity<QuizResponse> getDetail(
             @PathVariable(value = "id") ObjectId id
     ) {
         return ResponseEntity.ok(quizQueryService.getById(id, QuizResponse.class));
-    }
-
-    @PutMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
-    public ResponseEntity<Quiz> updateQuiz(
-            @PathVariable(value = "id") ObjectId id,
-            @RequestBody @Valid UpdateQuizCommand updateQuizCommand
-    ) {
-        updateQuizCommand.setId(id);
-        Quiz quiz = quizService.updateQuiz(updateQuizCommand);
-
-        return ResponseEntity.ok(quiz);
     }
 
     @PostMapping("/{id}/answer")
@@ -88,14 +66,5 @@ public class QuizController {
         QuizResult quiz = quizQueryService.checkAnswer(id, checkQuiz);
 
         return ResponseEntity.ok(quiz);
-    }
-
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'MODERATOR')")
-    public ResponseEntity<Void> deleteQuiz(
-            @PathVariable(value = "id") ObjectId id
-    ) {
-        quizService.delete(id);
-        return ResponseEntity.ok(null);
     }
 }

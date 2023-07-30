@@ -4,13 +4,13 @@ import com.vuongle.imagine.dto.auth.JwtResponse;
 import com.vuongle.imagine.models.User;
 import com.vuongle.imagine.services.core.auth.AuthService;
 import com.vuongle.imagine.services.core.auth.command.LoginCommand;
-import com.vuongle.imagine.services.core.auth.command.SignupCommand;
+import com.vuongle.imagine.services.core.auth.command.RegisterCommand;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class AuthController {
 
@@ -20,7 +20,7 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping("/sign-in")
+    @PostMapping("/token")
     public ResponseEntity<JwtResponse> login(
             @RequestBody @Valid LoginCommand loginCommand
     ) {
@@ -28,11 +28,11 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/sign-up")
+    @PostMapping("/register")
     public ResponseEntity<User> signUp(
-            @RequestBody @Valid SignupCommand signupCommand
+            @RequestBody @Valid RegisterCommand registerCommand
     ) {
-        User response = authService.signUp(signupCommand);
+        User response = authService.register(registerCommand);
         return ResponseEntity.ok(response);
     }
 

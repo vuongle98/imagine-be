@@ -83,12 +83,6 @@ public class QuizQueryServiceImpl implements QuizQueryService {
         }
 
         aggregationOperations.add(Aggregation.match(criteria));
-        aggregationOperations.add(Aggregation.lookup(
-                "question",
-                "listQuestionId",
-                "_id",
-                "questions"
-        ));
         aggregationOperations.addAll(Arrays.stream(aggregationOperationInputs).toList());
         aggregationOperations.add(Aggregation.skip((long) pageable.getPageNumber() * pageable.getPageSize()));
         aggregationOperations.add(Aggregation.limit(pageable.getPageSize()));
@@ -188,6 +182,30 @@ public class QuizQueryServiceImpl implements QuizQueryService {
 
         if (!listAndCriteria.isEmpty()) {
             criteria.andOperator(listAndCriteria.toArray(new Criteria[0]));
+        }
+
+        if (Objects.nonNull(query.getPublished())) {
+            criteria.and("published").is(query.getPublished());
+        }
+
+        if (Objects.nonNull(query.getLikeDescription())) {
+            criteria.and("description").regex(query.getLikeDescription(), "i");
+        }
+
+        if (Objects.nonNull(query.getCreatedBy())) {
+            criteria.and("createdBy").is(query.getCreatedBy());
+        }
+
+        if (Objects.nonNull(query.getCategory())) {
+            criteria.and("category").is(query.getCategory());
+        }
+
+        if (Objects.nonNull(query.getLevel())) {
+            criteria.and("level").is(query.getLevel());
+        }
+
+        if (Objects.nonNull(query.getMark())) {
+            criteria.and("mark").is(query.getMark());
         }
 
         return criteria;

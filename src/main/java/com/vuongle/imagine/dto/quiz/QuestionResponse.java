@@ -1,7 +1,7 @@
 package com.vuongle.imagine.dto.quiz;
 
+import com.vuongle.imagine.constants.QuizCategory;
 import com.vuongle.imagine.constants.QuestionType;
-import com.vuongle.imagine.models.User;
 import com.vuongle.imagine.models.embeded.BaseAnswer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -34,7 +34,9 @@ public class QuestionResponse {
 
     private boolean mark;
 
-    private User createdBy;
+    private QuizCategory category;
+
+    private String createdBy;
 
     private Instant createdDate;
 

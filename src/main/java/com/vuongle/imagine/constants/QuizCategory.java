@@ -1,5 +1,5 @@
 package com.vuongle.imagine.constants;
 
-public enum QuestionCategory {
+public enum QuizCategory {
     GENERAL, IT, COUNTRY
 }

@@ -14,6 +14,4 @@ import java.util.List;
 @AllArgsConstructor
 public class UpdateQuizCommand extends CreateQuizCommand implements Serializable {
     private ObjectId id;
-
-    private List<Question> questions;
 }

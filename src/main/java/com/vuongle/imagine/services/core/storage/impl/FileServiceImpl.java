@@ -29,9 +29,10 @@ public class FileServiceImpl implements FileService {
     private final Path rootLocation;
 
     private final FileRepository fileRepository;
+
     public FileServiceImpl(
-        StorageProperties properties,
-        FileRepository fileRepository
+            StorageProperties properties,
+            FileRepository fileRepository
     ) {
         this.fileRepository = fileRepository;
         this.rootLocation = Paths.get(properties.getLocation());

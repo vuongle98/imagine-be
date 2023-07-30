@@ -36,7 +36,7 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public Quiz createQuiz(CreateQuizCommand command) {
-        if (!command.isValidData()) {
+        if (command.isValidateData()) {
             throw new DataFormatException("Data not valid");
         }
 
@@ -48,6 +48,10 @@ public class QuizServiceImpl implements QuizService {
     @Override
     public Quiz updateQuiz(UpdateQuizCommand command) {
 
+        if (!command.isValidateData()) {
+            throw new DataFormatException("Data not valid");
+        }
+
         Quiz existedQuiz = quizQueryService.getById(command.getId());
 
         if (Objects.nonNull(command.getTitle())) {
@@ -58,9 +62,22 @@ public class QuizServiceImpl implements QuizService {
             existedQuiz.setDescription(command.getDescription());
         }
 
-        if (Objects.nonNull(command.getQuestions())) {
-            existedQuiz.setQuestions(command.getQuestions());
+        if (Objects.nonNull(command.getCountDown())) {
+            existedQuiz.setCountDown(command.getCountDown());
         }
+
+        if (Objects.nonNull(command.getCategory())) {
+            existedQuiz.setCategory(command.getCategory());
+        }
+
+        if (Objects.nonNull(command.getLevel())) {
+            existedQuiz.setLevel(command.getLevel());
+        }
+
+        existedQuiz.setListQuestionId(command.getListQuestionId());
+
+        existedQuiz.setPublished(command.isPublished());
+        existedQuiz.setMark(command.isMark());
 
         return quizRepository.save(existedQuiz);
     }

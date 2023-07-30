@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class SignupCommand extends LoginCommand implements Serializable {
+public class RegisterCommand extends LoginCommand implements Serializable {
     private String email;
     private String fullName;
     private List<UserRole> roles;

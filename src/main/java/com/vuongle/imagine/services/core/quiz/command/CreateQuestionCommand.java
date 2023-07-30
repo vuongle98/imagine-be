@@ -1,8 +1,10 @@
 package com.vuongle.imagine.services.core.quiz.command;
 
-import com.vuongle.imagine.constants.QuestionCategory;
+import com.vuongle.imagine.constants.QuizCategory;
 import com.vuongle.imagine.constants.QuestionType;
 import com.vuongle.imagine.models.embeded.Answer;
+import jakarta.annotation.Nonnull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,19 +23,24 @@ public class CreateQuestionCommand implements Serializable {
 
     private QuestionType type = QuestionType.YES_NO;
 
+    @Nonnull
+    @NotBlank
     private String title;
 
-    private boolean isActive = true;
+    private Boolean active = true;
 
+    @Nonnull
     private List<Answer> answers;
 
-    private boolean mark;
+    private Boolean mark = false;
 
     private Integer difficultlyLevel = 1;
 
-    private QuestionCategory category;
+    private QuizCategory category = QuizCategory.GENERAL;
+
+    private Integer countDown = 30;
 
     public boolean validateCreateData() {
-        return title != null && answers != null && !answers.isEmpty();
+        return !answers.isEmpty();
     }
 }

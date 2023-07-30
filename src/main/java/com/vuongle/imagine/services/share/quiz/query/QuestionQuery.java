@@ -1,6 +1,6 @@
 package com.vuongle.imagine.services.share.quiz.query;
 
-import com.vuongle.imagine.constants.QuestionCategory;
+import com.vuongle.imagine.constants.QuizCategory;
 import com.vuongle.imagine.constants.QuestionType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,21 +13,23 @@ import org.bson.types.ObjectId;
 @AllArgsConstructor
 @NoArgsConstructor
 public class QuestionQuery {
-    private String likeQuestion;
+    private String likeTitle;
 
     private ObjectId id;
 
-    private boolean active = true;
+    private Boolean active = true;
 
-    private boolean mark = false;
+    private Boolean mark = false;
 
     private String likeAnswer;
 
     private Integer difficultlyLevel;
 
     private Integer numOfCorrectAnswer;
-    private QuestionCategory category;
+    private QuizCategory category;
 
     private QuestionType type;
+
+    private String createdBy;
 
 }

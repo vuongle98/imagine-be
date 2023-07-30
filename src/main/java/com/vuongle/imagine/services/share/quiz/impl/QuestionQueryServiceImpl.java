@@ -168,13 +168,17 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
             listAndCriteria.add(Criteria.where("_id").is(questionQuery.getId()));
         }
 
-        if (Objects.nonNull(questionQuery.getLikeQuestion())) {
-            listAndCriteria.add(Criteria.where("question").regex(questionQuery.getLikeQuestion(), "i"));
+        if (Objects.nonNull(questionQuery.getLikeTitle())) {
+            listAndCriteria.add(Criteria.where("title").regex(questionQuery.getLikeTitle(), "i"));
         }
 
-        listAndCriteria.add(Criteria.where("active").is(questionQuery.isActive()));
+        if (Objects.nonNull(questionQuery.getMark())) {
+            listAndCriteria.add(Criteria.where("mark").is(questionQuery.getMark()));
+        }
 
-        listAndCriteria.add(Criteria.where("mark").is(questionQuery.isMark()));
+        if (Objects.nonNull(questionQuery.getActive())) {
+            listAndCriteria.add(Criteria.where("active").is(questionQuery.getActive()));
+        }
 
         if (Objects.nonNull(questionQuery.getDifficultlyLevel())) {
             listAndCriteria.add(Criteria.where("difficultlyLevel").is(questionQuery.getDifficultlyLevel()));
@@ -186,6 +190,10 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
 
         if (Objects.nonNull(questionQuery.getType())) {
             listAndCriteria.add(Criteria.where("type").is(questionQuery.getType()));
+        }
+
+        if (Objects.nonNull(questionQuery.getCreatedBy())) {
+            criteria.and("createdBy").is(questionQuery.getCreatedBy());
         }
 
 //        if (Objects.nonNull(questionQuery.getNumOfCorrectAnswer())) {

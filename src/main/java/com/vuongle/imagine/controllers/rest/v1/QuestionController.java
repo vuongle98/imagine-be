@@ -17,8 +17,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/question")
-@CrossOrigin(origins = "http://localhost:4200")
+@RequestMapping("/api/question")
+@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowCredentials="true")
 public class QuestionController {
 
     private final QuestionQueryService questionQueryService;
@@ -39,48 +39,18 @@ public class QuestionController {
             HttpServletRequest request,
             QuestionQuery questionQuery,
             Pageable pageable
-    ) {
+    ) throws InterruptedException{
+        Thread.sleep(300);
         Page<QuestionResponse> quizPage = questionQueryService.findPage(questionQuery, pageable, QuestionResponse.class);
         return ResponseEntity.ok(quizPage);
-    }
-
-    @PostMapping()
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
-    public ResponseEntity<Question> createQuestion(
-            HttpServletRequest request,
-            @RequestBody @Valid CreateQuestionCommand createCommand
-    ) {
-        Question question = questionService.createQuestion(createCommand);
-
-        return ResponseEntity.ok(question);
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
     public ResponseEntity<QuestionResponse> getDetail(
             @PathVariable(value = "id") ObjectId id
-    ) {
+    ) throws InterruptedException {
+        Thread.sleep(300);
         return ResponseEntity.ok(questionQueryService.getById(id, QuestionResponse.class));
-    }
-
-    @PutMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
-    public ResponseEntity<Question> updateQuestion(
-            @PathVariable(value = "id") ObjectId id,
-            @RequestBody @Valid UpdateQuestionCommand updateQuizCommand
-    ) {
-        updateQuizCommand.setId(id);
-        Question question = questionService.updateQuestion(updateQuizCommand);
-
-        return ResponseEntity.ok(question);
-    }
-
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'MODERATOR')")
-    public ResponseEntity<Void> deleteQuestion(
-            @PathVariable(value = "id") ObjectId id
-    ) {
-        questionService.deleteQuestion(id);
-        return ResponseEntity.ok(null);
     }
 }

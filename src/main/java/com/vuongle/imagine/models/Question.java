@@ -1,6 +1,6 @@
 package com.vuongle.imagine.models;
 
-import com.vuongle.imagine.constants.QuestionCategory;
+import com.vuongle.imagine.constants.QuizCategory;
 import com.vuongle.imagine.constants.QuestionType;
 import com.vuongle.imagine.dto.quiz.UserCheckQuiz;
 import com.vuongle.imagine.models.embeded.Answer;
@@ -34,6 +34,8 @@ public class Question implements Serializable {
 
     private String description;
 
+    private ObjectId imageDescId;
+
     private boolean active = true;
 
     private List<Answer> answers;
@@ -44,7 +46,9 @@ public class Question implements Serializable {
 
     private List<Answer> correctAnswer;
 
-    private QuestionCategory category = QuestionCategory.GENERAL;
+    private QuizCategory category = QuizCategory.GENERAL;
+
+    private Integer score = 0;
 
     @CreatedBy
     private String createdBy;
@@ -54,6 +58,8 @@ public class Question implements Serializable {
 
     @LastModifiedDate
     private Instant updatedDate;
+
+    private Integer countDown;
 
     public Integer checkAnswer(UserCheckQuiz checkQuiz) {
         int correct = 0;

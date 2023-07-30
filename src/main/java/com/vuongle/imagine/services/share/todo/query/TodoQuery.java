@@ -1,4 +1,4 @@
-package com.vuongle.imagine.dto.common;
+package com.vuongle.imagine.services.share.todo.query;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -6,10 +6,9 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class MessageResponse implements Serializable {
+public class TodoQuery implements Serializable {
     private String title;
-    private String message;
 }
