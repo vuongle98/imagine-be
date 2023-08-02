@@ -2,6 +2,7 @@ package com.vuongle.imagine.dto.quiz;
 
 import com.vuongle.imagine.constants.QuizCategory;
 import com.vuongle.imagine.constants.QuestionType;
+import com.vuongle.imagine.models.File;
 import com.vuongle.imagine.models.embeded.BaseAnswer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,11 +29,17 @@ public class QuestionResponse {
 
     private String title;
 
+    private String description;
+
     private boolean active;
 
     private List<BaseAnswer> answers;
 
     private boolean mark;
+
+    private File fileDescription;
+
+    private String codeDescription;
 
     private QuizCategory category;
 

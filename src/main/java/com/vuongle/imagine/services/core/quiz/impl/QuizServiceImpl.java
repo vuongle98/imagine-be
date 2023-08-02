@@ -2,16 +2,21 @@ package com.vuongle.imagine.services.core.quiz.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vuongle.imagine.exceptions.DataFormatException;
+import com.vuongle.imagine.models.Question;
 import com.vuongle.imagine.models.Quiz;
 import com.vuongle.imagine.repositories.QuizRepository;
 import com.vuongle.imagine.services.core.quiz.QuizService;
 import com.vuongle.imagine.services.core.quiz.command.CreateQuizCommand;
 import com.vuongle.imagine.services.core.quiz.command.UpdateQuizCommand;
+import com.vuongle.imagine.services.share.quiz.QuestionQueryService;
 import com.vuongle.imagine.services.share.quiz.QuizQueryService;
+import com.vuongle.imagine.services.share.quiz.query.QuestionQuery;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -24,14 +29,18 @@ public class QuizServiceImpl implements QuizService {
 
     private final QuizQueryService quizQueryService;
 
+    private final QuestionQueryService questionQueryService;
+
     public QuizServiceImpl(
             ObjectMapper objectMapper,
             QuizRepository quizRepository,
-            QuizQueryService quizQueryService
+            QuizQueryService quizQueryService,
+            QuestionQueryService questionQueryService
     ) {
         this.objectMapper = objectMapper;
         this.quizRepository = quizRepository;
         this.quizQueryService = quizQueryService;
+        this.questionQueryService = questionQueryService;
     }
 
     @Override
@@ -74,10 +83,24 @@ public class QuizServiceImpl implements QuizService {
             existedQuiz.setLevel(command.getLevel());
         }
 
-        existedQuiz.setListQuestionId(command.getListQuestionId());
+        if (Objects.nonNull(command.getPublished())) {
+            existedQuiz.setPublished(command.getPublished());
+        }
 
-        existedQuiz.setPublished(command.isPublished());
-        existedQuiz.setMark(command.isMark());
+        if (Objects.nonNull(command.getMark())) {
+            existedQuiz.setMark(command.getMark());
+        }
+
+        // check question exist before update
+        QuestionQuery questionQuery = new QuestionQuery();
+        questionQuery.setListId(command.getListQuestionId());
+        List<Question> questions = questionQueryService.findListQuestion(questionQuery);
+
+        if (questions.size() != command.getListQuestionId().size()) {
+            throw new DataFormatException("Some questions not found");
+        }
+
+        existedQuiz.setListQuestionId(command.getListQuestionId());
 
         return quizRepository.save(existedQuiz);
     }

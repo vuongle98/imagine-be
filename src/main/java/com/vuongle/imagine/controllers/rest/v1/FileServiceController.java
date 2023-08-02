@@ -3,6 +3,7 @@ package com.vuongle.imagine.controllers.rest.v1;
 import com.vuongle.imagine.models.File;
 import com.vuongle.imagine.services.core.storage.FileService;
 import com.vuongle.imagine.services.share.storage.FileQueryService;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -42,6 +43,37 @@ public class FileServiceController {
             ) {
         File fileInfo = this.fileService.upload(file);
         return ResponseEntity.ok(fileInfo);
+    }
+
+    @GetMapping("/download/{id}")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
+    public ResponseEntity<Object> download(
+            @PathVariable(value = "id") ObjectId id,
+            @RequestParam(value = "get-byte", required = false) boolean getByte
+    ) throws IOException {
+        if (Objects.isNull(id)) {
+            return null;
+        }
+        Resource fileResource = fileQueryService.download(id);
+
+        HttpHeaders header = new HttpHeaders();
+        header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=img.jpg");
+        header.add("Cache-Control", "no-cache, no-store, must-revalidate");
+        header.add("Pragma", "no-cache");
+        header.add("Expires", "0");
+
+        if (getByte) {
+            return ResponseEntity
+                    .ok()
+                    .contentType(MediaType.IMAGE_JPEG)
+                    .body(fileResource.getContentAsByteArray());
+        }
+
+        return ResponseEntity.ok()
+                .headers(header)
+                .contentLength(fileResource.contentLength())
+                .contentType(MediaType.parseMediaType("application/octet-stream"))
+                .body(fileResource);
     }
 
     @GetMapping("/download")

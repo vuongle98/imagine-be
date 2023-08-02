@@ -40,14 +40,10 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public Question createQuestion(CreateQuestionCommand command) {
-        if (!command.validateCreateData()) {
+        if (!command.validateQuestion()) {
             throw new DataFormatException("Thông tin nhập vào không hợp lệ");
         }
         Question question = objectMapper.convertValue(command, Question.class);
-
-        if (Objects.equals(question.getType(), QuestionType.YES_NO) && question.getAnswers().stream().filter(Answer::isCorrect).count() > 1) {
-            throw new DataFormatException("Câu hỏi yes/no chỉ có 1 câu trả lời đúng");
-        }
 
         List<Answer> correctAnswer = new ArrayList<>();
 
@@ -64,6 +60,11 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public Question updateQuestion(UpdateQuestionCommand updateCommand) {
+
+        if (!updateCommand.validateQuestion()) {
+            throw new DataFormatException("Data not valid");
+        }
+
         Question existedQuestion = questionQueryService.getQuestionById(updateCommand.getId());
 
         if (Objects.equals(updateCommand.getType(), QuestionType.YES_NO) && updateCommand.getAnswers().stream().filter(Answer::isCorrect).count() > 1) {

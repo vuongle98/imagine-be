@@ -193,7 +193,11 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
         }
 
         if (Objects.nonNull(questionQuery.getCreatedBy())) {
-            criteria.and("createdBy").is(questionQuery.getCreatedBy());
+            listAndCriteria.add(Criteria.where("createdBy").is(questionQuery.getCreatedBy()));
+        }
+
+        if (Objects.nonNull(questionQuery.getListId())) {
+            listAndCriteria.add(Criteria.where("_id").in(questionQuery.getListId()));
         }
 
 //        if (Objects.nonNull(questionQuery.getNumOfCorrectAnswer())) {

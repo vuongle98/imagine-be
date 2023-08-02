@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.IntStream;
 
 @RestController
 @RequestMapping("/api/admin/crawler")
@@ -37,8 +38,7 @@ public class AdminCrawlController {
             @RequestParam(value = "url") String url,
             @RequestParam(value = "num-of-page", required = false) Integer numOfPage
     ) throws IOException {
-        List<NeedCrawlData> needCrawlDataList = crawlQuizQTMService.getListNeedCrawlData(url);
-        crawlQuizQTMService.saveQuiz(needCrawlDataList);
+        crawlQuizQTMService.crawlAndSaveQuiz(url, numOfPage);
         return ResponseEntity.ok(null);
     }
 }

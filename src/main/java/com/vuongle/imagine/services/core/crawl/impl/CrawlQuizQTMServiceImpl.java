@@ -1,6 +1,7 @@
 package com.vuongle.imagine.services.core.crawl.impl;
 
 import com.vuongle.imagine.dto.crawl.NeedCrawlData;
+import com.vuongle.imagine.models.File;
 import com.vuongle.imagine.models.Question;
 import com.vuongle.imagine.models.Quiz;
 import com.vuongle.imagine.models.embeded.Answer;
@@ -8,6 +9,7 @@ import com.vuongle.imagine.repositories.QuestionRepository;
 import com.vuongle.imagine.repositories.QuizRepository;
 import com.vuongle.imagine.services.core.crawl.CrawlQuizQTMService;
 import com.vuongle.imagine.services.core.quiz.QuizService;
+import com.vuongle.imagine.services.core.storage.FileService;
 import com.vuongle.imagine.utils.StorageUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -16,6 +18,7 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @Transactional
@@ -40,17 +44,21 @@ public class CrawlQuizQTMServiceImpl implements CrawlQuizQTMService {
 
     private final String STORE_IMAGE_PATH = "images";
 
+    private final FileService fileService;
+
     @Value("${imagine.root.file.path}")
     private String IMAGING_ROOT_FILE_PATH;
 
     public CrawlQuizQTMServiceImpl(
             QuizService quizService,
             QuizRepository quizRepository,
-            QuestionRepository questionRepository
+            QuestionRepository questionRepository,
+            FileService fileService
     ) {
         this.quizService = quizService;
         this.quizRepository = quizRepository;
         this.questionRepository = questionRepository;
+        this.fileService = fileService;
     }
 
     @Override
@@ -93,14 +101,10 @@ public class CrawlQuizQTMServiceImpl implements CrawlQuizQTMService {
 
                     String imageName = StorageUtils.buildPathFromName(needCrawlData.getTitle(), ext);
 
-                    try (InputStream in = new URL(imgUrl).openStream()) {
-                        Path imagePath = Paths.get(IMAGING_ROOT_FILE_PATH, StorageUtils.buildDateFilePath(), imageName);
-                        StorageUtils.createFile(in, imagePath);
-                        needCrawlData.setImagePath(imagePath.toString());
-                    }
+                    File file = fileService.internalUpload(imgUrl, imageName);
+                    needCrawlData.setImage(file);
                 }
             }
-
             needCrawlDataList.add(needCrawlData);
         }
 
@@ -116,6 +120,29 @@ public class CrawlQuizQTMServiceImpl implements CrawlQuizQTMService {
             Question question = new Question();
             List<Answer> answers = new ArrayList<>();
             Element titleNode = element.getElementsByClass("quiz-section-title").first();
+
+            Element imageNode = element.getElementsByClass("quiz-section-img").first();
+
+            if (Objects.nonNull(imageNode)) {
+                Element img = imageNode.getElementsByTag("img").first();
+                String imgUrl = img.absUrl("data-src");
+
+                if (imgUrl.isEmpty() || imgUrl.isBlank()) {
+                    imgUrl = img.absUrl("src");
+                }
+
+                if (!imgUrl.isEmpty()) {
+                    List<String> splitUrl = Arrays.asList(imgUrl.split("\\."));
+
+                    String ext = splitUrl.get(splitUrl.size() - 1);
+
+                    String imageName = StorageUtils.buildPathFromName(needCrawlData.getTitle(), ext);
+
+                    File file = fileService.internalUpload(imgUrl, imageName);
+                    question.setFileDescription(file);
+                }
+            }
+
             Element contentNode = element.getElementsByClass("quiz-section-content").first();
 
             if (Objects.nonNull(titleNode)) {
@@ -132,7 +159,7 @@ public class CrawlQuizQTMServiceImpl implements CrawlQuizQTMService {
                     Element preTag = questionDesc.first().getElementsByTag("pre").first();
 
                     if (Objects.nonNull(preTag)) {
-                        question.setDescription(preTag.toString());
+                        question.setCodeDescription(preTag.toString());
                     }
                 }
 
@@ -171,13 +198,24 @@ public class CrawlQuizQTMServiceImpl implements CrawlQuizQTMService {
     }
 
     @Override
-    public void saveQuiz(List<NeedCrawlData> needCrawlDataList) throws IOException {
+    public List<Quiz> saveQuizs(List<NeedCrawlData> needCrawlDataList) throws IOException {
+        List<Quiz> quizs = new ArrayList<>();
         for (NeedCrawlData needCrawlData : needCrawlDataList) {
             Quiz quiz = new Quiz(needCrawlData);
             List<Question> questions = crawlQuestion(needCrawlData);
             questions = this.questionRepository.saveAll(questions);
             quiz.setListQuestionId(questions.stream().map(Question::getId).collect(Collectors.toList()));
-            quizRepository.save(quiz);
+            quizs.add(quizRepository.save(quiz));
+        }
+        return quizs;
+    }
+
+    @Override
+    public void crawlAndSaveQuiz(String url, Integer numOfPage) throws IOException {
+        for (int i = 1; i <= numOfPage; i++) {
+            String pageUrl = url + "?p=" + i;
+            List<NeedCrawlData> needCrawlDataList = getListNeedCrawlData(pageUrl);
+            saveQuizs(needCrawlDataList);
         }
     }
 }

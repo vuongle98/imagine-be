@@ -22,16 +22,16 @@ import java.util.Objects;
 @NoArgsConstructor
 public class CreateQuizCommand implements Serializable {
 
-    @NotNull(message = "Not null list question id")
+    @Size(min = 2, max = 100, message = "List question must be between 2 and 100 messages")
     private List<ObjectId> listQuestionId;
 
-    @Size(min = 2, max = 100, message = "The title must be between 2 and 100 messages.")
+    @Size(min = 2, max = 100, message = "The title must be between 2 and 100 messages")
     private String title;
 
-    @Size(max = 500, message = "The description can't be longer than 500 characters.")
+    @Size(max = 5000, message = "The description can't be longer than 5000 characters")
     private String description;
 
-    private boolean published;
+    private Boolean published;
 
     private Integer countDown = 30;
 
@@ -39,7 +39,7 @@ public class CreateQuizCommand implements Serializable {
 
     private QuizLevel level = QuizLevel.EASY;
 
-    private boolean mark;
+    private Boolean mark;
 
     public boolean isValidateData() {
         return !listQuestionId.isEmpty() && Objects.nonNull(title) && !title.isEmpty();

@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.bson.types.ObjectId;
 
+import java.util.List;
+
 @Data
 @ToString
 @AllArgsConstructor
@@ -16,6 +18,8 @@ public class QuestionQuery {
     private String likeTitle;
 
     private ObjectId id;
+
+    private List<ObjectId> listId;
 
     private Boolean active = true;
 

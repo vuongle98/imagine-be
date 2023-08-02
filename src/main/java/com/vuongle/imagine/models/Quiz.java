@@ -41,6 +41,8 @@ public class Quiz implements Serializable {
 
     private String imagePath;
 
+    private File image;
+
     private boolean published;
 
     @CreatedDate
@@ -66,5 +68,6 @@ public class Quiz implements Serializable {
         this.listQuestionId = needCrawlData.getListQuestionId();
         this.published = needCrawlData.isPublished();
         this.imagePath = needCrawlData.getImagePath();
+        this.image = needCrawlData.getImage();
     }
 }

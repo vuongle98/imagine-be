@@ -14,6 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -70,6 +72,32 @@ public class FileServiceImpl implements FileService {
             }
         } catch (IOException e) {
             throw new StorageException("Failed to store file.", e);
+        }
+    }
+
+    @Override
+    public File internalUpload(String url, String fileName) throws IOException{
+
+        Path path = this.rootLocation.resolve(Paths.get(StorageUtils.buildDateFilePath(), fileName)).normalize();
+
+        if (!path.toString().startsWith(this.rootLocation.toString())) {
+            throw new StorageException("Cannot save file outside root directory");
+        }
+
+        // copy file to storage
+        try (InputStream in = new URL(url).openStream()) {
+
+            long fileSize = StorageUtils.createFile(in, path);
+
+            // save file info to db
+            File fileInfo = new File();
+            fileInfo.setFileName(fileName);
+            fileInfo.setContentType(Files.probeContentType(path));
+            fileInfo.setSize(fileSize);
+            fileInfo.setPath(path.toString());
+            fileInfo.setExtension(StringUtils.getFilenameExtension(path.toString()));
+
+            return fileRepository.save(fileInfo);
         }
     }
 

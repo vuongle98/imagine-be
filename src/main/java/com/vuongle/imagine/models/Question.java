@@ -34,6 +34,10 @@ public class Question implements Serializable {
 
     private String description;
 
+    private String codeDescription;
+
+    private File fileDescription;
+
     private ObjectId imageDescId;
 
     private boolean active = true;

@@ -1,5 +1,7 @@
 package com.vuongle.imagine.dto.quiz;
 
+import com.vuongle.imagine.constants.QuizLevel;
+import com.vuongle.imagine.models.File;
 import com.vuongle.imagine.models.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,7 +31,7 @@ public class QuizResponse implements Serializable {
 
     private String description;
 
-    private String imagePath;
+    private File image;
 
     private Integer numOfQuestion;
 
@@ -42,4 +44,6 @@ public class QuizResponse implements Serializable {
     private String createdBy;
 
     private Integer countDown;
+
+    private QuizLevel level;
 }
