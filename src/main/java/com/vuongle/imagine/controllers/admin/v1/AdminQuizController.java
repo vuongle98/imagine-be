@@ -8,6 +8,7 @@ import com.vuongle.imagine.services.core.quiz.QuizService;
 import com.vuongle.imagine.services.core.quiz.command.CreateQuizCommand;
 import com.vuongle.imagine.services.core.quiz.command.UpdateQuizCommand;
 import com.vuongle.imagine.services.share.quiz.QuizQueryService;
+import com.vuongle.imagine.services.share.quiz.impl.QuizQueryServiceImpl;
 import com.vuongle.imagine.services.share.quiz.query.QuizQuery;
 import jakarta.validation.Valid;
 import org.bson.types.ObjectId;
@@ -26,12 +27,12 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowCredentials="true")
 public class AdminQuizController {
 
-    private final QuizQueryService quizQueryService;
+    private final QuizQueryServiceImpl quizQueryService;
 
     private final QuizService quizService;
 
     public AdminQuizController(
-            QuizQueryService quizQueryService,
+            QuizQueryServiceImpl quizQueryService,
             QuizService quizService
     ) {
         this.quizService = quizService;

@@ -15,6 +15,6 @@ public class Context {
 
         Authentication context = SecurityContextHolder.getContext().getAuthentication();
 
-        return  (User) context.getPrincipal();
+        return (User)context.getPrincipal();
     }
 }

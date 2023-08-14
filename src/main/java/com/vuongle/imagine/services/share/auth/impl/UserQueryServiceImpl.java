@@ -66,6 +66,11 @@ public class UserQueryServiceImpl implements UserQueryService {
     }
 
     @Override
+    public long countByQuery(UserQuery query, AggregationOperation... aggregationOperationInputs) {
+        return 0;
+    }
+
+    @Override
     public Criteria createCriteria(UserQuery query) {
         return null;
     }

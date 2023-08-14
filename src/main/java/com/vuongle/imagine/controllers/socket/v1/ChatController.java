@@ -18,8 +18,8 @@ public class ChatController {
 
     @MessageMapping("/chat.sendStringMessage")
     @SendTo("/topic/public")
-    public String sendMessage(@Payload String chatMessage) {
-        System.out.println(chatMessage);
+    public String sendMessage(@Payload String chatMessage) throws InterruptedException {
+        Thread.sleep(200);
         return chatMessage;
     }
 

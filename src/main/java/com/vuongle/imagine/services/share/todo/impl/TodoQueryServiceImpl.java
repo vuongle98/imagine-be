@@ -54,6 +54,11 @@ public class TodoQueryServiceImpl implements TodoQueryService {
     }
 
     @Override
+    public long countByQuery(TodoQuery query, AggregationOperation... aggregationOperationInputs) {
+        return 0;
+    }
+
+    @Override
     public Criteria createCriteria(TodoQuery query) {
         return null;
     }

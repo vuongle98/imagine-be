@@ -28,5 +28,7 @@ public interface BaseService<Q> {
 
     long countByQuery(Q Query);
 
+    long countByQuery(Q query, AggregationOperation ... aggregationOperationInputs);
+
     Criteria createCriteria(Q query);
 }

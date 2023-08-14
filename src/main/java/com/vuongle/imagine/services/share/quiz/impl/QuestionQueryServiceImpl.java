@@ -159,6 +159,11 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
     }
 
     @Override
+    public long countByQuery(QuestionQuery query, AggregationOperation... aggregationOperationInputs) {
+        return 0;
+    }
+
+    @Override
     public Criteria createCriteria(QuestionQuery questionQuery) {
         Criteria criteria = new Criteria();
 

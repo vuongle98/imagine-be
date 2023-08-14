@@ -1,13 +1,21 @@
 package com.vuongle.imagine.services.share.quiz.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vuongle.imagine.dto.quiz.QuestionResponse;
 import com.vuongle.imagine.dto.quiz.QuizResult;
 import com.vuongle.imagine.dto.quiz.UserCheckQuiz;
 import com.vuongle.imagine.exceptions.DataNotFoundException;
+import com.vuongle.imagine.exceptions.UserNotFoundException;
 import com.vuongle.imagine.models.Question;
 import com.vuongle.imagine.models.Quiz;
+import com.vuongle.imagine.models.User;
+import com.vuongle.imagine.models.embeded.Answer;
 import com.vuongle.imagine.repositories.QuizRepository;
+import com.vuongle.imagine.services.core.quiz.PlayingQuizHistoryService;
+import com.vuongle.imagine.services.core.quiz.command.CreatePlayingQuizHistoryCommand;
 import com.vuongle.imagine.services.share.quiz.QuizQueryService;
 import com.vuongle.imagine.services.share.quiz.query.QuizQuery;
+import com.vuongle.imagine.utils.Context;
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -21,6 +29,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class QuizQueryServiceImpl implements QuizQueryService {
@@ -29,12 +38,20 @@ public class QuizQueryServiceImpl implements QuizQueryService {
 
     private final QuizRepository quizRepository;
 
+    private final PlayingQuizHistoryService playingQuizHistoryService;
+
+    private final ObjectMapper objectMapper;
+
     public QuizQueryServiceImpl(
             QuizRepository quizRepository,
-            MongoTemplate mongoTemplate
+            MongoTemplate mongoTemplate,
+            PlayingQuizHistoryService playingQuizHistoryService,
+            ObjectMapper objectMapper
     ) {
         this.mongoTemplate = mongoTemplate;
         this.quizRepository = quizRepository;
+        this.playingQuizHistoryService = playingQuizHistoryService;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -116,19 +133,34 @@ public class QuizQueryServiceImpl implements QuizQueryService {
 
         Integer totalCorrect = 0;
 
-        for (Question question : existedQuiz.getQuestions()) {
 
-            for (UserCheckQuiz checkQuiz : answers) {
+        for (UserCheckQuiz checkQuiz : answers) {
+            for (Question question : existedQuiz.getQuestions()) {
                 if (question.getId().equals(checkQuiz.getQuestionId())) {
                     Integer correctNum = question.checkAnswer(checkQuiz);
                     totalCorrect += correctNum;
+                    checkQuiz.setCorrectAnswerIds(question.getCorrectAnswer().stream().map(Answer::getId).collect(Collectors.toList()));
+                    checkQuiz.setQuestion(objectMapper.convertValue(question, QuestionResponse.class));
                 }
             }
         }
 
-        result.setCorrectAnswers(totalCorrect);
+        result.setNumOfCorrectAnswers(totalCorrect);
         result.setTotalAnswers(answers.size());
         result.setAnswers(answers);
+
+        User user = Context.getUser();
+
+        if (Objects.isNull(user)) {
+            throw new UserNotFoundException("User not found");
+        }
+
+        // save history
+        CreatePlayingQuizHistoryCommand command = new CreatePlayingQuizHistoryCommand();
+        command.setQuizId(quizId);
+        command.setUserId(user.getId());
+        command.setResult(result);
+        playingQuizHistoryService.createPlayingQuizHistory(command);
 
         return result;
     }
@@ -162,15 +194,20 @@ public class QuizQueryServiceImpl implements QuizQueryService {
     }
 
     @Override
+    public long countByQuery(QuizQuery query, AggregationOperation... aggregationOperationInputs) {
+        return 0;
+    }
+
+    @Override
     public Criteria createCriteria(QuizQuery query) {
 
         Criteria criteria = new Criteria();
 
         List<Criteria> listAndCriteria = new ArrayList<>();
 
-        if (Objects.nonNull(query.getLikeQuestion())) {
-
-        }
+//        if (Objects.nonNull(query.getLikeQuestion())) {
+//
+//        }
 
         if (Objects.nonNull(query.getLikeTitle())) {
             listAndCriteria.add(Criteria.where("title").regex(query.getLikeTitle(), "i"));
@@ -180,32 +217,32 @@ public class QuizQueryServiceImpl implements QuizQueryService {
             listAndCriteria.add(Criteria.where("_id").is(query.getId()));
         }
 
-        if (!listAndCriteria.isEmpty()) {
-            criteria.andOperator(listAndCriteria.toArray(new Criteria[0]));
-        }
-
         if (Objects.nonNull(query.getPublished())) {
-            criteria.and("published").is(query.getPublished());
+            listAndCriteria.add(Criteria.where("published").is(query.getPublished()));
         }
 
         if (Objects.nonNull(query.getLikeDescription())) {
-            criteria.and("description").regex(query.getLikeDescription(), "i");
+            listAndCriteria.add(Criteria.where("description").regex(query.getLikeDescription(), "i"));
         }
 
         if (Objects.nonNull(query.getCreatedBy())) {
-            criteria.and("createdBy").is(query.getCreatedBy());
+            listAndCriteria.add(Criteria.where("createdBy").is(query.getCreatedBy()));
         }
 
         if (Objects.nonNull(query.getCategory())) {
-            criteria.and("category").is(query.getCategory());
+            listAndCriteria.add(Criteria.where("category").is(query.getCategory()));
         }
 
         if (Objects.nonNull(query.getLevel())) {
-            criteria.and("level").is(query.getLevel());
+            listAndCriteria.add(Criteria.where("level").is(query.getLevel()));
         }
 
         if (Objects.nonNull(query.getMark())) {
-            criteria.and("mark").is(query.getMark());
+            listAndCriteria.add(Criteria.where("mark").is(query.getMark()));
+        }
+
+        if (!listAndCriteria.isEmpty()) {
+            criteria.andOperator(listAndCriteria.toArray(new Criteria[0]));
         }
 
         return criteria;

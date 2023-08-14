@@ -3,11 +3,14 @@ package com.vuongle.imagine.controllers.rest.v1;
 import com.vuongle.imagine.dto.quiz.QuizResponse;
 import com.vuongle.imagine.dto.quiz.QuizResult;
 import com.vuongle.imagine.dto.quiz.UserCheckQuiz;
+import com.vuongle.imagine.models.PlayingQuizHistory;
 import com.vuongle.imagine.models.Quiz;
 import com.vuongle.imagine.services.core.quiz.QuizService;
 import com.vuongle.imagine.services.core.quiz.command.CreateQuizCommand;
 import com.vuongle.imagine.services.core.quiz.command.UpdateQuizCommand;
+import com.vuongle.imagine.services.share.quiz.PlayingQuizHistoryQueryService;
 import com.vuongle.imagine.services.share.quiz.QuizQueryService;
+import com.vuongle.imagine.services.share.quiz.query.PlayingQuizHistoryQuery;
 import com.vuongle.imagine.services.share.quiz.query.QuizQuery;
 import jakarta.validation.Valid;
 import org.bson.types.ObjectId;
@@ -28,12 +31,16 @@ public class QuizController {
 
     private final QuizService quizService;
 
+    private final PlayingQuizHistoryQueryService playingQuizHistoryQueryService;
+
     public QuizController(
             QuizQueryService quizQueryService,
-            QuizService quizService
+            QuizService quizService,
+            PlayingQuizHistoryQueryService playingQuizHistoryQueryService
     ) {
         this.quizService = quizService;
         this.quizQueryService = quizQueryService;
+        this.playingQuizHistoryQueryService = playingQuizHistoryQueryService;
     }
 
     @GetMapping

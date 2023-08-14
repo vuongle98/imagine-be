@@ -15,6 +15,6 @@ import java.util.List;
 public class QuizResult implements Serializable {
 
     private Integer totalAnswers = 0;
-    private Integer correctAnswers = 0;
+    private Integer numOfCorrectAnswers = 0;
     private List<UserCheckQuiz> answers;
 }
