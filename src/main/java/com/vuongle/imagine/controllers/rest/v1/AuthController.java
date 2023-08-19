@@ -36,4 +36,10 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/verify")
+    public ResponseEntity<User> verify() {
+        User response = authService.verifyUser();
+        return ResponseEntity.ok(response);
+    }
+
 }

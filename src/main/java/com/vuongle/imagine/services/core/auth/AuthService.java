@@ -11,4 +11,6 @@ public interface AuthService {
 
     User register(RegisterCommand command);
 
+    User verifyUser();
+
 }

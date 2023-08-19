@@ -2,11 +2,13 @@ package com.vuongle.imagine.services.core.auth.impl;
 
 import com.vuongle.imagine.constants.UserRole;
 import com.vuongle.imagine.dto.auth.JwtResponse;
+import com.vuongle.imagine.exceptions.UserNotFoundException;
 import com.vuongle.imagine.models.User;
 import com.vuongle.imagine.repositories.UserRepository;
 import com.vuongle.imagine.services.core.auth.AuthService;
 import com.vuongle.imagine.services.core.auth.command.LoginCommand;
 import com.vuongle.imagine.services.core.auth.command.RegisterCommand;
+import com.vuongle.imagine.utils.Context;
 import com.vuongle.imagine.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -82,6 +85,17 @@ public class AuthServiceImpl implements AuthService {
         );
 
         user = userRepository.save(user);
+        return user;
+    }
+
+    @Override
+    public User verifyUser() {
+        User user = Context.getUser();
+
+        if (Objects.isNull(user)) {
+            throw new UserNotFoundException("User not found");
+        }
+
         return user;
     }
 }

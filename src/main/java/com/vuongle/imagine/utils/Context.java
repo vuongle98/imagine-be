@@ -15,6 +15,10 @@ public class Context {
 
         Authentication context = SecurityContextHolder.getContext().getAuthentication();
 
+        if (context.getPrincipal() instanceof String) {
+            return null;
+        }
+
         return (User)context.getPrincipal();
     }
 }
