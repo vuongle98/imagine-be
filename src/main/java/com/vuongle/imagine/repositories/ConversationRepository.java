@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.repository.Query;
 
 import java.util.List;
 
-public interface ConversationRepository extends MongoRepository<Conversation, String> {
+public interface ConversationRepository extends MongoRepository<Conversation, ObjectId> {
 
     @Query("{members: ?0}")
     Page<Conversation> findAllByMember(ObjectId memberId, Pageable pageable);

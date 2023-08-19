@@ -12,6 +12,8 @@ import java.util.Optional;
 
 public interface BaseService<Q> {
 
+//    M findById(ObjectId id);
+
     <T> Optional<T> findById(ObjectId id, Class<T> classType);
 
     <T> T getById(ObjectId id, Class<T> classType);

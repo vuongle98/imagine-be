@@ -1,7 +1,9 @@
 package com.vuongle.imagine.controllers.socket.v1;
 
+import com.vuongle.imagine.constants.ChatType;
 import com.vuongle.imagine.models.ChatMessage;
 import com.vuongle.imagine.models.User;
+import com.vuongle.imagine.models.embeded.Sender;
 import com.vuongle.imagine.repositories.MessageRepository;
 import com.vuongle.imagine.utils.Context;
 import org.bson.types.ObjectId;
@@ -26,9 +28,27 @@ public class ChatController {
         this.messageRepository = messageRepository;
     }
 
-    @MessageMapping("/chat.sendMessage")
+    @MessageMapping("/chat/public")
     @SendTo("/topic/public")
-    public ChatMessage sendMessage(@Payload ChatMessage chatMessage) {
+    public ChatMessage sendMessage(@Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
+
+        UsernamePasswordAuthenticationToken authenticationToken = (UsernamePasswordAuthenticationToken) headerAccessor.getUser();
+
+        if (authenticationToken == null) {
+            chatMessage.setType(ChatType.PUBLIC);
+            chatMessage.setSender(new Sender("anonymous", "anonymous"));
+            chatMessage.setTimeStamp(Instant.now());
+            return chatMessage;
+//            throw new RuntimeException("No authentication");
+        }
+
+        User user = (User) authenticationToken.getPrincipal();
+        chatMessage.setType(ChatType.PUBLIC);
+        chatMessage.setSender(new Sender(user));
+        chatMessage.setTimeStamp(Instant.now());
+
+        messageRepository.save(chatMessage);
+
         return chatMessage;
     }
 
@@ -42,15 +62,16 @@ public class ChatController {
         UsernamePasswordAuthenticationToken authenticationToken = (UsernamePasswordAuthenticationToken) headerAccessor.getUser();
 
         if (authenticationToken == null) {
-            throw new RuntimeException("No user");
+            throw new RuntimeException("No authentication");
         }
 
         User user = (User) authenticationToken.getPrincipal();
 
         // Add username in web socket session
         chatMessage.setTimeStamp(Instant.now());
-        chatMessage.setSenderId(user.getId());
+        chatMessage.setSender(new Sender(user));
         chatMessage.setConversationId(conversationId);
+        chatMessage.setType(ChatType.GROUP);
         messageRepository.save(chatMessage);
         return chatMessage;
     }
