@@ -37,7 +37,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             @NotNull HttpServletResponse response,
             @NotNull FilterChain filterChain
     ) throws ServletException, IOException {
-        String jwt = parseJwt(request);
+        String jwt = jwtUtils.parseJwt(request);
 
         if (jwt == null) {
             filterChain.doFilter(request, response);
@@ -69,13 +69,4 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 //        return path.startsWith("/quiz");
 //    }
 
-    private String parseJwt(HttpServletRequest request) {
-        String headerAuth = request.getHeader("Authorization");
-
-        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
-            return headerAuth.substring(7);
-        }
-
-        return null;
-    }
 }

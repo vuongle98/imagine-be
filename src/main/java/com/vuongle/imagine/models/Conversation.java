@@ -8,22 +8,23 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
+import java.util.List;
 
-@AllArgsConstructor
+
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
-@Document("message")
-public class ChatMessage {
+@Document("conversation")
+public class Conversation {
 
     @Id
     private ObjectId id;
 
-    private ObjectId conversationId;
-    private String content;
-    private ObjectId senderId;
-    private Instant timeStamp;
-    private ObjectId replyTo;
-    private ObjectId fileId;
+    private String name;
+
+    private List<ObjectId> members;
 
     private boolean deleted;
+
+    private Instant timeStamp;
 }
