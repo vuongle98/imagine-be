@@ -51,7 +51,8 @@ public class ChatQueryServiceImpl implements ChatQueryService {
 
     @Override
     public List<ChatMessage> findAllPublicMessages() {
-        List<ChatMessage> chatMessages = messageRepository.findAllPublicMessages();
+        List<ChatMessage> chatMessages = messageRepository.findAllPublicMessages(Pageable.ofSize(recentMessageLimit));
+
         chatMessages.sort(Comparator.comparing(ChatMessage::getTimeStamp));
         return chatMessages;
     }

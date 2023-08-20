@@ -1,6 +1,7 @@
 package com.vuongle.imagine.controllers.rest.v1;
 
 import com.vuongle.imagine.dto.auth.JwtResponse;
+import com.vuongle.imagine.dto.auth.UserProfile;
 import com.vuongle.imagine.models.User;
 import com.vuongle.imagine.services.core.auth.AuthService;
 import com.vuongle.imagine.services.core.auth.command.LoginCommand;
@@ -37,8 +38,8 @@ public class AuthController {
     }
 
     @GetMapping("/verify")
-    public ResponseEntity<User> verify() {
-        User response = authService.verifyUser();
+    public ResponseEntity<UserProfile> verify() {
+        UserProfile response = authService.verifyUser();
         return ResponseEntity.ok(response);
     }
 

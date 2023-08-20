@@ -14,6 +14,7 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,6 +23,8 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Objects;
 
 @Configuration
@@ -50,6 +53,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             public Message<?> preSend(@NotNull Message<?> message, @NotNull MessageChannel channel) {
                 StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
+                if (Objects.isNull(accessor)) {
+                    return message;
+                }
+
                 // Authentication user
                 if (StompCommand.CONNECT == accessor.getCommand()) {
 
@@ -57,6 +64,16 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     String jwtToken = accessor.getFirstNativeHeader("Authorization");
 
                     if (StringUtils.isEmpty(jwtToken)) {
+
+                        String username = accessor.getFirstNativeHeader("username");
+
+                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+//                            accessor.getSessionId()
+                                username,
+                            null,
+                            new ArrayList<>(Collections.singleton(new SimpleGrantedAuthority("ANONYMOUS")))
+                        );
+                        accessor.setUser(authentication);
                         return message;
                     }
 
@@ -101,5 +118,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.setApplicationDestinationPrefixes("/app");
         registry.enableSimpleBroker("/topic");
+        registry.setUserDestinationPrefix("/user");
     }
 }

@@ -16,9 +16,6 @@ import java.util.List;
 public class JwtResponse implements Serializable {
     private String token;
     private String type = "Bearer";
-    private ObjectId id;
-    private String username;
-    private String fullName;
-    private String email;
-    private List<String> roles;
+
+    private UserProfile user;
 }

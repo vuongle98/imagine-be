@@ -42,10 +42,22 @@ public class ChatController {
 //            throw new RuntimeException("No authentication");
         }
 
-        User user = (User) authenticationToken.getPrincipal();
-        chatMessage.setType(ChatType.PUBLIC);
-        chatMessage.setSender(new Sender(user));
-        chatMessage.setTimeStamp(Instant.now());
+        if (authenticationToken.getPrincipal() instanceof String username) {
+            chatMessage.setType(ChatType.PUBLIC);
+//            chatMessage.setSender(new Sender("anonymous-"+sessionId, "anonymous", sessionId));
+            chatMessage.setSender(new Sender("anonymous-" + username, "anonymous-" + username));
+            chatMessage.setTimeStamp(Instant.now());
+        }
+
+        if (authenticationToken.getPrincipal() instanceof User user) {
+            chatMessage.setType(ChatType.PUBLIC);
+            chatMessage.setSender(new Sender(user));
+            chatMessage.setTimeStamp(Instant.now());
+        }
+
+        if (chatMessage.getSender() == null) {
+            throw new RuntimeException("No sender");
+        }
 
         messageRepository.save(chatMessage);
 
@@ -65,13 +77,25 @@ public class ChatController {
             throw new RuntimeException("No authentication");
         }
 
-        User user = (User) authenticationToken.getPrincipal();
+        if (authenticationToken.getPrincipal() instanceof String username) {
+            chatMessage.setType(ChatType.GROUP);
+            chatMessage.setSender(new Sender("anonymous-" + username, "anonymous-" + username));
+            chatMessage.setTimeStamp(Instant.now());
+        }
 
-        // Add username in web socket session
-        chatMessage.setTimeStamp(Instant.now());
-        chatMessage.setSender(new Sender(user));
-        chatMessage.setConversationId(conversationId);
-        chatMessage.setType(ChatType.GROUP);
+        if (authenticationToken.getPrincipal() instanceof User user) {
+
+            // Add username in web socket session
+            chatMessage.setTimeStamp(Instant.now());
+            chatMessage.setSender(new Sender(user));
+            chatMessage.setConversationId(conversationId);
+            chatMessage.setType(ChatType.GROUP);
+        }
+
+        if (chatMessage.getSender() == null) {
+            throw new RuntimeException("No sender");
+        }
+
         messageRepository.save(chatMessage);
         return chatMessage;
     }

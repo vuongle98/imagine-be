@@ -15,6 +15,6 @@ public interface MessageRepository extends MongoRepository<ChatMessage, String> 
 
     List<ChatMessage> findAllByConversationIdOrderByIdDesc(ObjectId conversationId, Pageable pageable);
 
-    @Query(value = "{type: 'PUBLIC'}")
-    List<ChatMessage> findAllPublicMessages();
+    @Query(value = "{type: 'PUBLIC'}", sort = "{_id: -1}")
+    List<ChatMessage> findAllPublicMessages(Pageable pageable);
 }

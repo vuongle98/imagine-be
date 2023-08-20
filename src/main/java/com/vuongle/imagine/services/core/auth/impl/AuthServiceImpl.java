@@ -2,6 +2,7 @@ package com.vuongle.imagine.services.core.auth.impl;
 
 import com.vuongle.imagine.constants.UserRole;
 import com.vuongle.imagine.dto.auth.JwtResponse;
+import com.vuongle.imagine.dto.auth.UserProfile;
 import com.vuongle.imagine.exceptions.UserNotFoundException;
 import com.vuongle.imagine.models.User;
 import com.vuongle.imagine.repositories.UserRepository;
@@ -43,17 +44,15 @@ public class AuthServiceImpl implements AuthService {
         String jwt = jwtUtils.generateJwtToken(authentication);
 
         User userDetails = (User) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .toList();
+//        List<String> roles = userDetails.getAuthorities().stream()
+//                .map(GrantedAuthority::getAuthority)
+//                .toList();
 
         return JwtResponse.builder()
                 .token(jwt)
                 .type("Bearer")
-                .id(userDetails.getId())
-                .username(userDetails.getUsername())
-                .fullName(userDetails.getFullName())
-                .roles(roles).build();
+                .user(new UserProfile(userDetails))
+                .build();
 
 //        return new JwtResponse(
 //                jwt,
@@ -89,13 +88,13 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public User verifyUser() {
+    public UserProfile verifyUser() {
         User user = Context.getUser();
 
         if (Objects.isNull(user)) {
             throw new UserNotFoundException("User not found");
         }
 
-        return user;
+        return new UserProfile(user);
     }
 }

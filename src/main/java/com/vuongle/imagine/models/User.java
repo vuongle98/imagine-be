@@ -2,6 +2,8 @@ package com.vuongle.imagine.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vuongle.imagine.constants.UserRole;
+import com.vuongle.imagine.dto.auth.BaseUser;
+import com.vuongle.imagine.dto.auth.UserProfile;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -25,20 +27,9 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document("user")
-public class User implements Serializable, UserDetails {
-
-    @Id
-    private ObjectId id;
-
-    private String fullName;
-
-    @NotEmpty(message = "Please provide your username")
-    private String username;
+public class User extends BaseUser implements Serializable, UserDetails {
 
     private boolean enable = true;
-
-    @Email()
-    private String email;
 
     @NotEmpty(message = "Please provide your password")
     @JsonIgnore
@@ -50,11 +41,15 @@ public class User implements Serializable, UserDetails {
     @LastModifiedDate
     private Instant updatedDate;
 
-    private Set<UserRole> roles;
-
     private boolean locked;
 
     private boolean enabled;
+
+    private boolean online;
+
+    private Instant lastActive;
+
+    private List<ObjectId> friendIds;
 
     public User(
             String username,

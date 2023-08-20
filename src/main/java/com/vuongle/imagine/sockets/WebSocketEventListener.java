@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Component;
@@ -25,13 +26,11 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
+import org.springframework.web.socket.messaging.SessionUnsubscribeEvent;
 
 import java.security.Principal;
 import java.time.Instant;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Component
 public class WebSocketEventListener {
@@ -49,6 +48,9 @@ public class WebSocketEventListener {
     @Autowired
     private ChatQueryServiceImpl chatQueryService;
 
+    @Autowired
+    private SimpUserRegistry simpUserRegistry;
+
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
         logger.info("Received a new web socket connection");
@@ -59,6 +61,9 @@ public class WebSocketEventListener {
 
     @EventListener
     public void handleSessionSubscribeEvent(SessionSubscribeEvent event) {
+
+        // TODO: check trùng user
+        // TODO: check nếu user subscribe lần 2
 
         GenericMessage<?> message = (GenericMessage<?>) event.getMessage();
         String simpDestination = (String) message.getHeaders().get("simpDestination");
@@ -80,9 +85,10 @@ public class WebSocketEventListener {
                     if (conversationStr.equals("public")) {
 
                         List<ChatMessage> publicMessages = chatQueryService.findAllPublicMessages();
-                        publicMessages.add(welcomeMessage(user.getUsername()));
 
-                        messagingTemplate.convertAndSend(simpDestination, publicMessages);
+                        messagingTemplate.convertAndSendToUser(user.getUsername(), simpDestination, publicMessages);
+                        messagingTemplate.convertAndSend(simpDestination, welcomeMessage(user.getUsername()));
+
                         return;
                     }
 
@@ -98,7 +104,19 @@ public class WebSocketEventListener {
 
                     List<ChatMessage> messages = chatQueryService.findAllByConversationId(conversationId);
 
-                    messagingTemplate.convertAndSend(simpDestination, messages);
+                    messagingTemplate.convertAndSendToUser(user.getUsername(), simpDestination, messages);
+                }
+
+                if (token.getPrincipal() instanceof String username) {
+
+                    if (!conversationStr.equals("public")) {
+                        return;
+                    }
+
+                    List<ChatMessage> publicMessages = chatQueryService.findAllPublicMessages();
+
+                    messagingTemplate.convertAndSendToUser(username, simpDestination, publicMessages);
+                    messagingTemplate.convertAndSend(simpDestination, welcomeMessage("anonymous-" +username));
                 }
             } else {
 
@@ -109,7 +127,20 @@ public class WebSocketEventListener {
                 List<ChatMessage> publicMessages = chatQueryService.findAllPublicMessages();
                 publicMessages.add(welcomeMessage("anonymous"));
 
-                messagingTemplate.convertAndSend(simpDestination, publicMessages);
+                messagingTemplate.convertAndSendToUser("anonymous", simpDestination, publicMessages);
+            }
+        }
+    }
+
+    @EventListener
+    public void handleSessionUnSubscribeEvent(SessionUnsubscribeEvent event) {
+
+        Principal principal = event.getUser();
+
+        if (principal instanceof UsernamePasswordAuthenticationToken token) {
+
+            if (token.getPrincipal() instanceof User user) {
+                System.out.println(user.getUsername() + " unsubscribed");
             }
         }
     }
@@ -133,9 +164,16 @@ public class WebSocketEventListener {
     private ChatMessage welcomeMessage(String username) {
         String welcomeMessage = String.format("Welcome %s to public channel", username);
 
-        if (username.equals("anonymous")) {
-            welcomeMessage += ", your chat message will not be saved";
-        }
+        ChatMessage chatMessage = new ChatMessage();
+        chatMessage.setContent(welcomeMessage);
+        chatMessage.setSender(new Sender("admin", "admin"));
+        chatMessage.setTimeStamp(Instant.now());
+
+        return chatMessage;
+    }
+
+    private ChatMessage goodbyeMessage(String username) {
+        String welcomeMessage = String.format("%s leave channel", username);
 
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setContent(welcomeMessage);
@@ -143,5 +181,10 @@ public class WebSocketEventListener {
         chatMessage.setTimeStamp(Instant.now());
 
         return chatMessage;
+    }
+
+    private boolean isUserLoggedIn(String username) {
+        return simpUserRegistry.getUsers().stream().anyMatch(u -> u.getName().equals(username));
+
     }
 }
