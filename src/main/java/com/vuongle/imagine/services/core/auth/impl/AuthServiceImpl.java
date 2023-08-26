@@ -3,6 +3,7 @@ package com.vuongle.imagine.services.core.auth.impl;
 import com.vuongle.imagine.constants.UserRole;
 import com.vuongle.imagine.dto.auth.JwtResponse;
 import com.vuongle.imagine.dto.auth.UserProfile;
+import com.vuongle.imagine.exceptions.DataFormatException;
 import com.vuongle.imagine.exceptions.UserNotFoundException;
 import com.vuongle.imagine.models.User;
 import com.vuongle.imagine.repositories.UserRepository;
@@ -71,11 +72,11 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public User register(RegisterCommand command) {
         if (userRepository.existsByUsername(command.getUsername())) {
-            return null;
+            throw new DataFormatException("Username already exists");
         }
 
         if (userRepository.existsByEmail(command.getEmail())) {
-            return null;
+            throw new DataFormatException("Email already exists");
         }
 
         User user = new User(

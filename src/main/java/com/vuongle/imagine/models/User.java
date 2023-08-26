@@ -1,9 +1,11 @@
 package com.vuongle.imagine.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.vuongle.imagine.constants.FriendStatus;
 import com.vuongle.imagine.constants.UserRole;
 import com.vuongle.imagine.dto.auth.BaseUser;
 import com.vuongle.imagine.dto.auth.UserProfile;
+import com.vuongle.imagine.models.embeded.FriendData;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -29,8 +31,6 @@ import java.util.stream.Collectors;
 @Document("user")
 public class User extends BaseUser implements Serializable, UserDetails {
 
-    private boolean enable = true;
-
     @NotEmpty(message = "Please provide your password")
     @JsonIgnore
     private String password;
@@ -43,13 +43,13 @@ public class User extends BaseUser implements Serializable, UserDetails {
 
     private boolean locked;
 
-    private boolean enabled;
+    private boolean enabled = true;
 
     private boolean online;
 
     private Instant lastActive;
 
-    private List<ObjectId> friendIds;
+    private List<FriendData> friendship;
 
     public User(
             String username,
@@ -60,7 +60,7 @@ public class User extends BaseUser implements Serializable, UserDetails {
     ) {
         this.username = username;
         this.fullName = fullName;
-        this.email = email;
+        if (Objects.nonNull(email) && !email.isEmpty()) this.email = email;
         this.password = password;
         this.roles = new HashSet<>(roles);
     }
@@ -73,6 +73,54 @@ public class User extends BaseUser implements Serializable, UserDetails {
         this.password = password;
         this.fullName = fullName;
         this.roles = authorities.stream().map(item -> UserRole.valueOf(item.getAuthority())).collect(Collectors.toSet());
+    }
+
+    public void setRoles(List<UserRole> roles) {
+        this.roles = new HashSet<>(roles);
+    }
+
+    // user hiện tại request
+    public void addFriend(ObjectId friendId) {
+        if (Objects.isNull(friendship))
+            friendship = new ArrayList<>();
+        friendship.add(new FriendData(friendId, FriendStatus.REQUESTED, Instant.now()));
+    }
+
+    // user được request
+    public void pendingFriend(ObjectId friendId) {
+        if (Objects.isNull(friendship))
+            friendship = new ArrayList<>();
+        friendship.add(new FriendData(friendId, FriendStatus.PENDING, Instant.now()));
+    }
+
+    public void acceptFriend(ObjectId friendId) {
+        // find in friendship
+        if (friendship.stream().noneMatch(friend -> friend.getId().equals(friendId))) {
+            throw new RuntimeException("Friend not found");
+        }
+
+        // update
+        for (FriendData friend : friendship) {
+            if (friend.getId().equals(friendId)) {
+                friend.setStatus(FriendStatus.ACCEPTED);
+                friend.setUpdateTime(Instant.now());
+            }
+        }
+    }
+
+    public void declineFriend(ObjectId friendId) {
+        // find in friendship
+        if (friendship.stream().noneMatch(friend -> friend.getId().equals(friendId))) {
+            throw new RuntimeException("Friend not found");
+        }
+
+        // update
+        for (FriendData friend : friendship) {
+            if (friend.getId().equals(friendId)) {
+                friend.setStatus(FriendStatus.REJECTED);
+                friend.setUpdateTime(Instant.now());
+            }
+        }
     }
 
     @Override

@@ -19,4 +19,6 @@ public class RegisterCommand extends LoginCommand implements Serializable {
     private String email;
     @NotNull(message = "Username must be not null")
     private String fullName;
+
+    private List<UserRole> roles;
 }

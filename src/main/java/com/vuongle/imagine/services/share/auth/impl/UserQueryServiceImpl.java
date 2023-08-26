@@ -165,7 +165,7 @@ public class UserQueryServiceImpl implements UserQueryService {
     public UserProfile findById(ObjectId id) {
 
         AggregationOperation lookup = Aggregation.lookup(
-                "user", "friendIds", "_id", "friends"
+                "user", "friendData.id", "_id", "friends"
         );
 
         UserQuery query = new UserQuery();
@@ -177,7 +177,7 @@ public class UserQueryServiceImpl implements UserQueryService {
     @Override
     public UserProfile findByUsername(String username) {
         AggregationOperation lookup = Aggregation.lookup(
-                "user", "friendIds", "_id", "friends"
+                "user", "friendData.id", "_id", "friends"
         );
 
         UserQuery query = new UserQuery();
