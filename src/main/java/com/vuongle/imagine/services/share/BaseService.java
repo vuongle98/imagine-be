@@ -24,6 +24,8 @@ public interface BaseService<Q> {
 
     <T> List<T> findList(Q query, Class<T> returnType);
 
+    <T> List<T> findList(Q query, Class<T> returnType, AggregationOperation... aggregationOperationInputs);
+
     Query createQuery(Q query, Pageable pageable);
 
     Query createQuery(Q query);

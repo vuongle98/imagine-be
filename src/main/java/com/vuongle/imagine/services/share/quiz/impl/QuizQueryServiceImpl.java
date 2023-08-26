@@ -172,6 +172,11 @@ public class QuizQueryServiceImpl implements QuizQueryService {
     }
 
     @Override
+    public <T> List<T> findList(QuizQuery query, Class<T> returnType, AggregationOperation... aggregationOperationInputs) {
+        return null;
+    }
+
+    @Override
     public Query createQuery(QuizQuery param, Pageable pageable) {
         Query query = new Query();
         query.addCriteria(createCriteria(param));

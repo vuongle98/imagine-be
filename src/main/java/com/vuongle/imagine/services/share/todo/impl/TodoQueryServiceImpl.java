@@ -39,6 +39,11 @@ public class TodoQueryServiceImpl implements TodoQueryService {
     }
 
     @Override
+    public <T> List<T> findList(TodoQuery query, Class<T> returnType, AggregationOperation... aggregationOperationInputs) {
+        return null;
+    }
+
+    @Override
     public Query createQuery(TodoQuery query, Pageable pageable) {
         return null;
     }

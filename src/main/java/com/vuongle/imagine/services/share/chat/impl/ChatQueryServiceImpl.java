@@ -95,6 +95,11 @@ public class ChatQueryServiceImpl implements ChatQueryService {
     }
 
     @Override
+    public <T> List<T> findList(ChatQuery query, Class<T> returnType, AggregationOperation... aggregationOperationInputs) {
+        return null;
+    }
+
+    @Override
     public Query createQuery(ChatQuery chatQuery, Pageable pageable) {
         Query query = new Query();
 

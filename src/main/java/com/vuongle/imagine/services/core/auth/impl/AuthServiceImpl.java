@@ -9,6 +9,7 @@ import com.vuongle.imagine.repositories.UserRepository;
 import com.vuongle.imagine.services.core.auth.AuthService;
 import com.vuongle.imagine.services.core.auth.command.LoginCommand;
 import com.vuongle.imagine.services.core.auth.command.RegisterCommand;
+import com.vuongle.imagine.services.share.auth.impl.UserQueryServiceImpl;
 import com.vuongle.imagine.utils.Context;
 import com.vuongle.imagine.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,8 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
 
     private final UserRepository userRepository;
+
+    private final UserQueryServiceImpl userQueryService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -91,10 +94,10 @@ public class AuthServiceImpl implements AuthService {
     public UserProfile verifyUser() {
         User user = Context.getUser();
 
-        if (Objects.isNull(user)) {
+        if (Objects.isNull(user) || !user.isEnabled()) {
             throw new UserNotFoundException("User not found");
         }
 
-        return new UserProfile(user);
+        return userQueryService.findById(user.getId());
     }
 }

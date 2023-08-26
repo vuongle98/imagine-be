@@ -7,17 +7,20 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Document("user")
 public class UserProfile extends BaseUser implements Serializable {
 
-    private String test;
+    private List<UserProfile> friends;
 
     public UserProfile(User user) {
         this.id = user.getId();

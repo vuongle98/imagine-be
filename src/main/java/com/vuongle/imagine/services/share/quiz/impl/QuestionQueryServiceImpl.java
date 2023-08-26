@@ -138,6 +138,11 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
     }
 
     @Override
+    public <T> List<T> findList(QuestionQuery query, Class<T> returnType, AggregationOperation... aggregationOperationInputs) {
+        return null;
+    }
+
+    @Override
     public Query createQuery(QuestionQuery questionQuery, Pageable pageable) {
         Query query = new Query();
         query.addCriteria(createCriteria(questionQuery));

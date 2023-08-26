@@ -86,6 +86,11 @@ public class PlayingQuizHistoryQueryServiceImpl implements PlayingQuizHistoryQue
     }
 
     @Override
+    public <T> List<T> findList(PlayingQuizHistoryQuery query, Class<T> returnType, AggregationOperation... aggregationOperationInputs) {
+        return null;
+    }
+
+    @Override
     public Query createQuery(PlayingQuizHistoryQuery quizHistoryQuery, Pageable pageable) {
         Query query = new Query();
         if (Objects.nonNull(pageable)) {

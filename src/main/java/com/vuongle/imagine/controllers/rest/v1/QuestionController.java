@@ -37,7 +37,7 @@ public class QuestionController {
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
     public ResponseEntity<Page<QuestionResponse>> findAllQuestion(
             HttpServletRequest request,
-            @RequestParam QuestionQuery questionQuery,
+            QuestionQuery questionQuery,
             Pageable pageable
     ) throws InterruptedException{
         Thread.sleep(300);
