@@ -4,16 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vuongle.imagine.constants.FriendStatus;
 import com.vuongle.imagine.constants.UserRole;
 import com.vuongle.imagine.dto.auth.BaseUser;
-import com.vuongle.imagine.dto.auth.UserProfile;
-import com.vuongle.imagine.models.embeded.FriendData;
-import jakarta.validation.constraints.Email;
+import com.vuongle.imagine.models.embeded.FriendShipData;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
@@ -49,7 +46,7 @@ public class User extends BaseUser implements Serializable, UserDetails {
 
     private Instant lastActive;
 
-    private List<FriendData> friendship;
+    private List<FriendShipData> friendship;
 
     public User(
             String username,
@@ -60,7 +57,7 @@ public class User extends BaseUser implements Serializable, UserDetails {
     ) {
         this.username = username;
         this.fullName = fullName;
-        if (Objects.nonNull(email) && !email.isEmpty()) this.email = email;
+        this.email = email;
         this.password = password;
         this.roles = new HashSet<>(roles);
     }
@@ -83,14 +80,14 @@ public class User extends BaseUser implements Serializable, UserDetails {
     public void addFriend(ObjectId friendId) {
         if (Objects.isNull(friendship))
             friendship = new ArrayList<>();
-        friendship.add(new FriendData(friendId, FriendStatus.REQUESTED, Instant.now()));
+        friendship.add(new FriendShipData(friendId, FriendStatus.REQUESTED, Instant.now()));
     }
 
     // user được request
     public void pendingFriend(ObjectId friendId) {
         if (Objects.isNull(friendship))
             friendship = new ArrayList<>();
-        friendship.add(new FriendData(friendId, FriendStatus.PENDING, Instant.now()));
+        friendship.add(new FriendShipData(friendId, FriendStatus.PENDING, Instant.now()));
     }
 
     public void acceptFriend(ObjectId friendId) {
@@ -100,7 +97,7 @@ public class User extends BaseUser implements Serializable, UserDetails {
         }
 
         // update
-        for (FriendData friend : friendship) {
+        for (FriendShipData friend : friendship) {
             if (friend.getId().equals(friendId)) {
                 friend.setStatus(FriendStatus.ACCEPTED);
                 friend.setUpdateTime(Instant.now());
@@ -115,7 +112,7 @@ public class User extends BaseUser implements Serializable, UserDetails {
         }
 
         // update
-        for (FriendData friend : friendship) {
+        for (FriendShipData friend : friendship) {
             if (friend.getId().equals(friendId)) {
                 friend.setStatus(FriendStatus.REJECTED);
                 friend.setUpdateTime(Instant.now());
@@ -135,16 +132,11 @@ public class User extends BaseUser implements Serializable, UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !this.isLocked();
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
         return true;
     }
 

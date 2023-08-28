@@ -95,4 +95,24 @@ public class UserController {
         return ResponseEntity.ok(userProfile);
     }
 
+    @PutMapping("/accept-friend")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
+    public ResponseEntity<UserProfile> acceptFriend(
+            @RequestParam("friend-id") ObjectId friendId
+    ) {
+
+        UserProfile userProfile = userService.acceptFriend(friendId);
+        return ResponseEntity.ok(userProfile);
+    }
+
+    @PutMapping("/decline-friend")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
+    public ResponseEntity<UserProfile> declineFriend(
+            @RequestParam("friend-id") ObjectId friendId
+    ) {
+
+        UserProfile userProfile = userService.declineFriend(friendId);
+        return ResponseEntity.ok(userProfile);
+    }
+
 }

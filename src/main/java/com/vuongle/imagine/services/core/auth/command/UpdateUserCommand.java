@@ -1,6 +1,6 @@
 package com.vuongle.imagine.services.core.auth.command;
 
-import com.vuongle.imagine.models.embeded.FriendData;
+import com.vuongle.imagine.models.embeded.FriendShipData;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,5 +26,5 @@ public class UpdateUserCommand extends CreateUserCommand implements Serializable
 
     private Boolean online;
 
-    private List<FriendData> addFriendData;
+    private List<FriendShipData> friendShipData;
 }

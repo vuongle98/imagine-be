@@ -128,7 +128,7 @@ public class UserQueryServiceImpl implements UserQueryService {
         }
 
         if (Objects.nonNull(query.getFriendIds())) {
-            listAndCriteria.add(Criteria.where("friendIds").in(query.getFriendIds()));
+            listAndCriteria.add(Criteria.where("friendship._id").in(query.getFriendIds()));
         }
 
         if (!listAndCriteria.isEmpty()) {
@@ -142,7 +142,7 @@ public class UserQueryServiceImpl implements UserQueryService {
     public List<UserProfile> findList(UserQuery userQuery) {
 
         AggregationOperation lookup = Aggregation.lookup(
-                "user", "friendIds", "_id", "friends"
+                "user", "friendship._id", "_id", "friends"
         );
 
         return findList(userQuery, UserProfile.class, lookup);
@@ -165,7 +165,7 @@ public class UserQueryServiceImpl implements UserQueryService {
     public UserProfile findById(ObjectId id) {
 
         AggregationOperation lookup = Aggregation.lookup(
-                "user", "friendData.id", "_id", "friends"
+                "user", "friendship._id", "_id", "friends"
         );
 
         UserQuery query = new UserQuery();
@@ -177,7 +177,7 @@ public class UserQueryServiceImpl implements UserQueryService {
     @Override
     public UserProfile findByUsername(String username) {
         AggregationOperation lookup = Aggregation.lookup(
-                "user", "friendData.id", "_id", "friends"
+                "user", "friendship._id", "_id", "friends"
         );
 
         UserQuery query = new UserQuery();

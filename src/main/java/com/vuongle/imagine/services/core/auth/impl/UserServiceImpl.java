@@ -4,7 +4,7 @@ import com.vuongle.imagine.constants.FriendStatus;
 import com.vuongle.imagine.constants.UserRole;
 import com.vuongle.imagine.dto.auth.UserProfile;
 import com.vuongle.imagine.models.User;
-import com.vuongle.imagine.models.embeded.FriendData;
+import com.vuongle.imagine.models.embeded.FriendShipData;
 import com.vuongle.imagine.repositories.UserRepository;
 import com.vuongle.imagine.services.core.auth.UserService;
 import com.vuongle.imagine.services.core.auth.command.RegisterCommand;
@@ -12,7 +12,6 @@ import com.vuongle.imagine.services.core.auth.command.UpdateUserCommand;
 import com.vuongle.imagine.services.share.auth.impl.UserQueryServiceImpl;
 import com.vuongle.imagine.utils.Context;
 import org.bson.types.ObjectId;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +39,36 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserProfile addFriend(ObjectId friendId) {
+        return changeFriendShipStatus(friendId, FriendStatus.REQUESTED);
+    }
+
+    @Override
+    public UserProfile acceptFriend(ObjectId friendId) {
+        return changeFriendShipStatus(friendId, FriendStatus.ACCEPTED);
+    }
+
+    @Override
+    public UserProfile declineFriend(ObjectId friendId) {
+        return changeFriendShipStatus(friendId, FriendStatus.REJECTED);
+    }
+
+    @Override
+    public UserProfile setUserOnline(ObjectId userId, boolean online) {
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Not found user"));
+
+        user.setOnline(online);
+
+        if (!online) {
+            user.setLastActive(Instant.now());
+        }
+
+        user = userRepository.save(user);
+
+        return userQueryService.findById(user.getId());
+    }
+
+    private UserProfile changeFriendShipStatus(ObjectId friendId, FriendStatus status) {
 
         User currentUser = Context.getUser();
 
@@ -47,19 +76,19 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Not found user");
         }
 
-        FriendData friendData = new FriendData();
-        friendData.setId(friendId);
-        friendData.setStatus(FriendStatus.REQUESTED);
+        FriendShipData friendShipData = new FriendShipData();
+        friendShipData.setId(friendId);
+        friendShipData.setStatus(status);
 
         UpdateUserCommand command = new UpdateUserCommand();
-        command.setAddFriendData(List.of(friendData));
         command.setId(currentUser.getId());
+        command.setFriendShipData(List.of(friendShipData));
 
-        return new UserProfile(update(command));
+        return update(command);
     }
 
     @Override
-    public User create(RegisterCommand command) {
+    public UserProfile create(RegisterCommand command) {
 
         User currentUser = Context.getUser();
 
@@ -85,11 +114,11 @@ public class UserServiceImpl implements UserService {
 
         user = userRepository.save(user);
 
-        return userQueryService.getById(user.getId(), User.class);
+        return userQueryService.getById(user.getId(), UserProfile.class);
     }
 
     @Override
-    public User update(UpdateUserCommand command) {
+    public UserProfile update(UpdateUserCommand command) {
 
         // find existing user
         User user = userQueryService.getById(command.getId(), User.class);
@@ -148,20 +177,20 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-        if (Objects.nonNull(command.getAddFriendData())) {
+        if (Objects.nonNull(command.getFriendShipData())) {
 
-            for (FriendData friendData : command.getAddFriendData()) {
-                switch (friendData.getStatus()) {
-                    case REQUESTED -> addFriend(user, friendData.getId());
-                    case ACCEPTED -> acceptFriend(user, friendData.getId());
-                    case REJECTED -> declineFriend(user, friendData.getId());
+            for (FriendShipData friendShipData : command.getFriendShipData()) {
+                switch (friendShipData.getStatus()) {
+                    case REQUESTED -> addFriend(user, friendShipData.getId());
+                    case ACCEPTED -> acceptFriend(user, friendShipData.getId());
+                    case REJECTED -> declineFriend(user, friendShipData.getId());
                 }
             }
         }
 
         user = userRepository.save(user);
 
-        return userQueryService.getById(user.getId(), User.class);
+        return userQueryService.getById(user.getId(), UserProfile.class);
     }
 
     @Override

@@ -13,7 +13,7 @@ import java.time.Instant;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class FriendData implements Serializable {
+public class FriendShipData implements Serializable {
 
     @Id
     private ObjectId id;

@@ -6,6 +6,8 @@ import com.vuongle.imagine.models.User;
 import com.vuongle.imagine.models.embeded.Sender;
 import com.vuongle.imagine.repositories.ConversationRepository;
 import com.vuongle.imagine.repositories.MessageRepository;
+import com.vuongle.imagine.services.core.auth.command.UpdateUserCommand;
+import com.vuongle.imagine.services.core.auth.impl.UserServiceImpl;
 import com.vuongle.imagine.services.share.chat.ChatQueryService;
 import com.vuongle.imagine.services.share.chat.impl.ChatQueryServiceImpl;
 import org.bson.types.ObjectId;
@@ -51,9 +53,20 @@ public class WebSocketEventListener {
     @Autowired
     private SimpUserRegistry simpUserRegistry;
 
+    @Autowired
+    private UserServiceImpl userService;
+
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
+
         logger.info("Received a new web socket connection");
+        User user = getUser(event.getUser());
+
+        if (Objects.isNull(user)) {
+            return;
+        }
+        // set user online
+        userService.setUserOnline(user.getId(), true);
     }
 
     @Value("${imagine.app.recent-message-limit}")
@@ -149,6 +162,15 @@ public class WebSocketEventListener {
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
 
+        User user = getUser(headerAccessor.getUser());
+
+        if (Objects.isNull(user)) {
+            return;
+        }
+
+        // set user online
+        userService.setUserOnline(user.getId(), false);
+
         String username = (String) headerAccessor.getSessionAttributes().get("username");
         if (username != null) {
             logger.info("User Disconnected : " + username);
@@ -186,5 +208,23 @@ public class WebSocketEventListener {
     private boolean isUserLoggedIn(String username) {
         return simpUserRegistry.getUsers().stream().anyMatch(u -> u.getName().equals(username));
 
+    }
+
+    private User getUser(Principal principal) {
+        if (principal instanceof UsernamePasswordAuthenticationToken token) {
+            if (token.getPrincipal() instanceof User user) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    private String getUsername(Principal principal) {
+        if (principal instanceof UsernamePasswordAuthenticationToken token) {
+            if (token.getPrincipal() instanceof String username) {
+                return username;
+            }
+        }
+        return null;
     }
 }
