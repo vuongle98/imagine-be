@@ -1,5 +1,6 @@
 package com.vuongle.imagine.repositories;
 
+import com.vuongle.imagine.constants.ChatType;
 import com.vuongle.imagine.models.Conversation;
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
@@ -13,4 +14,7 @@ public interface ConversationRepository extends MongoRepository<Conversation, Ob
 
     @Query("{members: ?0}")
     Page<Conversation> findAllByMember(ObjectId memberId, Pageable pageable);
+
+    @Query("{type: ?0, members: {$all: ?1}}")
+    Conversation findByTypeAndMembers(ChatType type, List<ObjectId> memberId);
 }

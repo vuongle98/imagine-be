@@ -53,6 +53,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserProfile removeFriend(ObjectId friendId) {
+        return changeFriendShipStatus(friendId, FriendStatus.REMOVE);
+    }
+
+    @Override
     public UserProfile setUserOnline(ObjectId userId, boolean online) {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Not found user"));
@@ -184,6 +189,7 @@ public class UserServiceImpl implements UserService {
                     case REQUESTED -> addFriend(user, friendShipData.getId());
                     case ACCEPTED -> acceptFriend(user, friendShipData.getId());
                     case REJECTED -> declineFriend(user, friendShipData.getId());
+                    case REMOVE -> removeFriend(user, friendShipData.getId());
                 }
             }
         }
@@ -244,6 +250,16 @@ public class UserServiceImpl implements UserService {
         // friend is declined
         User friend = userQueryService.getById(friendId, User.class);
         friend.declineFriend(user.getId());
+        userRepository.save(friend);
+    }
+
+    private void removeFriend(User user, ObjectId friendId) {
+        // no need to check if friendId exists because it is checked in addFriend
+        // current user remove friend
+        user.removeFriend(friendId);
+
+        User friend = userQueryService.getById(friendId, User.class);
+        friend.removeFriend(user.getId());
         userRepository.save(friend);
     }
 }

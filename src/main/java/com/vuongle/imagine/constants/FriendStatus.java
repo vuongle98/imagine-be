@@ -1,7 +1,7 @@
 package com.vuongle.imagine.constants;
 
 public enum FriendStatus {
-    REQUESTED, PENDING, ACCEPTED, REJECTED
+    REQUESTED, PENDING, ACCEPTED, REJECTED, REMOVE, BLOCK, REJECTED_REQUEST
 }
 
 // REQUESTED for user who want to request add friend

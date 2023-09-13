@@ -15,5 +15,7 @@ public interface UserService extends BaseService<RegisterCommand, UpdateUserComm
 
     UserProfile declineFriend(ObjectId friendId);
 
+    UserProfile removeFriend(ObjectId friendId);
+
     UserProfile setUserOnline(ObjectId userId, boolean online);
 }

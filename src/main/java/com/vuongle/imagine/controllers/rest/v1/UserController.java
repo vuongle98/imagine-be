@@ -70,19 +70,30 @@ public class UserController {
             return ResponseEntity.badRequest().build();
         }
 
-        UserProfile userProfile = userQueryService.findById(user.getId());
+        UserProfile foundProfile = userQueryService.findById(user.getId());
 
-        if (Objects.nonNull(username) && !userProfile.getUsername().equals(username)) {
-            if (userProfile.getFriends().stream().anyMatch(friend -> friend.getUsername().equals(username))) {
-                // check is friend
-                UserProfile foundProfile = userQueryService.findByUsername(username);
-                return ResponseEntity.ok(foundProfile);
-            }
+        if (Objects.nonNull(username) && !foundProfile.getUsername().equals(username)) {
 
-            return ResponseEntity.badRequest().build();
+            foundProfile = userQueryService.findByUsername(username);
+
+//            if (userProfile.getFriends().stream().anyMatch(friend -> friend.getUsername().equals(username))) {
+//                // check is friend
+//                UserProfile foundProfile = userQueryService.findByUsername(username);
+//                return ResponseEntity.ok(foundProfile);
+//            }
         }
 
-        return ResponseEntity.ok(userProfile);
+        if (Objects.isNull(foundProfile)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        for (UserProfile friend : foundProfile.getFriends()) {
+            foundProfile.getFriendship().stream()
+                    .filter(f -> f.getId().equals(friend.getId()))
+                    .forEach(f -> friend.setFriendStatus(f.getStatus()));
+        }
+
+        return ResponseEntity.ok(foundProfile);
     }
 
     @PutMapping("/add-friend")
@@ -112,6 +123,16 @@ public class UserController {
     ) {
 
         UserProfile userProfile = userService.declineFriend(friendId);
+        return ResponseEntity.ok(userProfile);
+    }
+
+    @PutMapping("/remove-friend")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
+    public ResponseEntity<UserProfile> removeFriend(
+            @RequestParam("friend-id") ObjectId friendId
+    ) {
+
+        UserProfile userProfile = userService.removeFriend(friendId);
         return ResponseEntity.ok(userProfile);
     }
 

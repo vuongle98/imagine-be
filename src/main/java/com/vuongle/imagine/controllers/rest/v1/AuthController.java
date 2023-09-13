@@ -40,6 +40,12 @@ public class AuthController {
     @GetMapping("/verify")
     public ResponseEntity<UserProfile> verify() {
         UserProfile response = authService.verifyUser();
+
+        for (UserProfile friend : response.getFriends()) {
+            response.getFriendship().stream()
+                    .filter(f -> f.getId().equals(friend.getId()))
+                    .forEach(f -> friend.setFriendStatus(f.getStatus()));
+        }
         return ResponseEntity.ok(response);
     }
 

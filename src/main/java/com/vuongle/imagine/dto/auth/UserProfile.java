@@ -1,7 +1,10 @@
 package com.vuongle.imagine.dto.auth;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.vuongle.imagine.constants.FriendStatus;
 import com.vuongle.imagine.constants.UserRole;
 import com.vuongle.imagine.models.User;
+import com.vuongle.imagine.models.embeded.FriendShipData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,6 +24,11 @@ import java.util.Set;
 public class UserProfile extends BaseUser implements Serializable {
 
     private List<UserProfile> friends;
+
+    @JsonIgnore
+    private List<FriendShipData> friendship;
+
+    private FriendStatus friendStatus;
 
     public UserProfile(User user) {
         this.id = user.getId();

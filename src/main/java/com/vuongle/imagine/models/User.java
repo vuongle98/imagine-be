@@ -80,14 +80,38 @@ public class User extends BaseUser implements Serializable, UserDetails {
     public void addFriend(ObjectId friendId) {
         if (Objects.isNull(friendship))
             friendship = new ArrayList<>();
-        friendship.add(new FriendShipData(friendId, FriendStatus.REQUESTED, Instant.now()));
+
+        if (friendship.stream().noneMatch(friend -> friend.getId().equals(friendId))) {
+            friendship.add(new FriendShipData(friendId, FriendStatus.REQUESTED, Instant.now()));
+        } else {
+
+            for (FriendShipData friend : friendship) {
+                if (friend.getId().equals(friendId) &&
+                        (friend.getStatus().equals(FriendStatus.REJECTED_REQUEST) || friend.getStatus().equals(FriendStatus.REJECTED))) {
+                    friend.setStatus(FriendStatus.REQUESTED);
+                    friend.setUpdateTime(Instant.now());
+                }
+            }
+        }
     }
 
     // user được request
     public void pendingFriend(ObjectId friendId) {
         if (Objects.isNull(friendship))
             friendship = new ArrayList<>();
-        friendship.add(new FriendShipData(friendId, FriendStatus.PENDING, Instant.now()));
+
+        if (friendship.stream().noneMatch(friend -> friend.getId().equals(friendId))) {
+            friendship.add(new FriendShipData(friendId, FriendStatus.PENDING, Instant.now()));
+        } else {
+
+            for (FriendShipData friend : friendship) {
+                if (friend.getId().equals(friendId) &&
+                        (friend.getStatus().equals(FriendStatus.REJECTED) || friend.getStatus().equals(FriendStatus.REJECTED_REQUEST))) {
+                    friend.setStatus(FriendStatus.PENDING);
+                    friend.setUpdateTime(Instant.now());
+                }
+            }
+        }
     }
 
     public void acceptFriend(ObjectId friendId) {
@@ -96,11 +120,17 @@ public class User extends BaseUser implements Serializable, UserDetails {
             throw new RuntimeException("Friend not found");
         }
 
-        // update
-        for (FriendShipData friend : friendship) {
-            if (friend.getId().equals(friendId)) {
-                friend.setStatus(FriendStatus.ACCEPTED);
-                friend.setUpdateTime(Instant.now());
+        // nếu đã có pending mới accept
+        if (friendship.stream()
+                .anyMatch(friend ->
+                        friend.getId().equals(friendId) &&
+                                (friend.getStatus().equals(FriendStatus.PENDING) || friend.getStatus().equals(FriendStatus.REQUESTED)))) {
+            // update
+            for (FriendShipData friend : friendship) {
+                if (friend.getId().equals(friendId)) {
+                    friend.setStatus(FriendStatus.ACCEPTED);
+                    friend.setUpdateTime(Instant.now());
+                }
             }
         }
     }
@@ -110,14 +140,44 @@ public class User extends BaseUser implements Serializable, UserDetails {
         if (friendship.stream().noneMatch(friend -> friend.getId().equals(friendId))) {
             throw new RuntimeException("Friend not found");
         }
-
-        // update
-        for (FriendShipData friend : friendship) {
-            if (friend.getId().equals(friendId)) {
-                friend.setStatus(FriendStatus.REJECTED);
-                friend.setUpdateTime(Instant.now());
+        // bên gửi thì bij huyr
+        if (friendship.stream()
+                .anyMatch(friend ->
+                        friend.getId().equals(friendId) && friend.getStatus().equals(FriendStatus.REQUESTED))) {
+            // update
+            for (FriendShipData friend : friendship) {
+                if (friend.getId().equals(friendId)) {
+                    friend.setStatus(FriendStatus.REJECTED_REQUEST);
+                    friend.setUpdateTime(Instant.now());
+                }
             }
         }
+
+        // ben nhan thi huy
+        if (friendship.stream()
+                .anyMatch(friend ->
+                        friend.getId().equals(friendId) &&
+                                friend.getStatus().equals(FriendStatus.PENDING))) {
+            // update
+            for (FriendShipData friend : friendship) {
+                if (friend.getId().equals(friendId)) {
+                    friend.setStatus(FriendStatus.REJECTED);
+                    friend.setUpdateTime(Instant.now());
+                }
+            }
+        }
+    }
+
+    public void removeFriend(ObjectId friendId) {
+        if (Objects.isNull(friendship)) return;
+
+        if (friendship.stream().anyMatch(friend -> friend.getId().equals(friendId))) {
+            friendship.removeIf(friend -> friend.getId().equals(friendId));
+        }
+    }
+
+    public boolean isFriend(ObjectId friendId) {
+        return friendship.stream().anyMatch(friend -> friend.getId().equals(friendId) && friend.getStatus().equals(FriendStatus.ACCEPTED));
     }
 
     @Override
@@ -146,5 +206,13 @@ public class User extends BaseUser implements Serializable, UserDetails {
         if (obj == null || getClass() != obj.getClass()) return false;
         User user = (User) obj;
         return Objects.equals(id, user.getId());
+    }
+
+    public boolean isAdmin() {
+        return roles.contains(UserRole.ADMIN);
+    }
+
+    public boolean isModerator() {
+        return roles.contains(UserRole.MODERATOR);
     }
 }
