@@ -8,5 +8,5 @@ public interface BaseService<Q, E, T> {
 
     T update(E command);
 
-    void delete(ObjectId id);
+    void delete(ObjectId id, boolean delete);
 }

@@ -12,9 +12,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
-import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,8 +51,16 @@ public class UserQueryServiceImpl implements UserQueryService {
     }
 
     @Override
-    public <T> Page<T> findPage(UserQuery query, Pageable pageable, Class<T> returnType) {
-        return null;
+    public <T> Page<T> findPage(UserQuery userQuery, Pageable pageable, Class<T> returnType) {
+
+        Query query = createQuery(userQuery, pageable);
+        List<T> data = mongoTemplate.find(query, returnType);
+
+        return PageableExecutionUtils.getPage(
+                data,
+                pageable,
+                () -> mongoTemplate.count(Query.of(query).limit(-1).skip(-1), returnType)
+        );
     }
 
     @Override
@@ -119,12 +127,20 @@ public class UserQueryServiceImpl implements UserQueryService {
             listAndCriteria.add(Criteria.where("username").is(query.getUsername()));
         }
 
-        if (Objects.nonNull(query.getEmail())) {
-            listAndCriteria.add(Criteria.where("email").is(query.getEmail()));
+        if (Objects.nonNull(query.getLikeUsername())) {
+            listAndCriteria.add(Criteria.where("username").regex(query.getLikeUsername(), "i"));
         }
 
-        if (Objects.nonNull(query.getFullName())) {
-            listAndCriteria.add(Criteria.where("fullName").regex(query.getFullName(), "i"));
+        if (Objects.nonNull(query.getLikeEmail())) {
+            listAndCriteria.add(Criteria.where("email").regex(query.getLikeEmail(), "i"));
+        }
+
+        if (Objects.nonNull(query.getLikeFullName())) {
+            listAndCriteria.add(Criteria.where("fullName").regex(query.getLikeFullName(), "i"));
+        }
+
+        if (Objects.nonNull(query.getRole())) {
+            listAndCriteria.add(Criteria.where("roles").is(query.getRole()));
         }
 
         if (Objects.nonNull(query.getFriendIds())) {

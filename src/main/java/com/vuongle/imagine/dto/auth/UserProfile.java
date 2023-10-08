@@ -30,6 +30,10 @@ public class UserProfile extends BaseUser implements Serializable {
 
     private FriendStatus friendStatus;
 
+    private boolean locked;
+
+    private boolean enabled;
+
     public UserProfile(User user) {
         this.id = user.getId();
         this.fullName = user.getFullName();

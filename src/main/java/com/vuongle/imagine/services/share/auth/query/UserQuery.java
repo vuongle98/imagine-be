@@ -1,5 +1,6 @@
 package com.vuongle.imagine.services.share.auth.query;
 
+import com.vuongle.imagine.constants.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,9 +14,11 @@ import java.util.List;
 @NoArgsConstructor
 public class UserQuery implements Serializable {
     private String username;
-    private String fullName;
+    private String likeUsername;
+    private String likeFullName;
 
-    private String email;
+    private String likeEmail;
     private List<ObjectId> friendIds;
     private ObjectId id;
+    private UserRole role;
 }

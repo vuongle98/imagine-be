@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -60,7 +61,8 @@ public class QuizController {
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
     public ResponseEntity<QuizResponse> getDetail(
             @PathVariable(value = "id") ObjectId id
-    ) {
+    ) throws InterruptedException {
+        Thread.sleep(300);
         return ResponseEntity.ok(quizQueryService.getById(id, QuizResponse.class));
     }
 

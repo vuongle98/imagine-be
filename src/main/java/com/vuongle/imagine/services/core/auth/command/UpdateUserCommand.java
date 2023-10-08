@@ -1,7 +1,6 @@
 package com.vuongle.imagine.services.core.auth.command;
 
 import com.vuongle.imagine.models.embeded.FriendShipData;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,10 +16,9 @@ import java.util.List;
 @Data
 public class UpdateUserCommand extends CreateUserCommand implements Serializable {
 
-    @NotNull(message = "Id must be not null")
     private ObjectId id;
 
-    private Boolean active;
+    private Boolean enabled;
 
     private Boolean locked;
 

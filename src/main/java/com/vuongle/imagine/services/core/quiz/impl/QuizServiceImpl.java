@@ -45,7 +45,7 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public Quiz createQuiz(CreateQuizCommand command) {
-        if (command.isValidateData()) {
+        if (!command.isValidateData()) {
             throw new DataFormatException("Data not valid");
         }
 

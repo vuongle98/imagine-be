@@ -215,4 +215,8 @@ public class User extends BaseUser implements Serializable, UserDetails {
     public boolean isModerator() {
         return roles.contains(UserRole.MODERATOR);
     }
+
+    private void lockUser(boolean locked) {
+        this.setLocked(locked);
+    }
 }

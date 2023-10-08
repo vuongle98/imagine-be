@@ -167,8 +167,8 @@ public class UserServiceImpl implements UserService {
             user.setPassword(passwordEncoder.encode(command.getPassword()));
         }
 
-        if (Objects.nonNull(command.getActive())) {
-            user.setEnabled(command.getActive());
+        if (Objects.nonNull(command.getEnabled())) {
+            user.setEnabled(command.getEnabled());
         }
 
         if (Objects.nonNull(command.getLocked())) {
@@ -200,18 +200,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void delete(ObjectId id) {
+    public void delete(ObjectId id, boolean delete) {
         User user = Context.getUser();
 
         if (Objects.isNull(user)) {
             throw new RuntimeException("No permission");
         }
 
-        if (!user.getRoles().contains(UserRole.ADMIN) || !user.getRoles().contains(UserRole.MODERATOR)) {
+        if (!user.getRoles().contains(UserRole.ADMIN) && !user.getRoles().contains(UserRole.MODERATOR)) {
             throw new RuntimeException("No permission");
         }
 
-        userRepository.deleteById(id);
+        if (delete) {
+            userRepository.deleteById(id);
+        } else {
+            // find user
+            User currentUser = userQueryService.getById(id, User.class);
+            if (Objects.isNull(currentUser)) {
+                throw new RuntimeException("User not found");
+            }
+            // set delete status
+            currentUser.setLocked(true);
+
+            userRepository.save(currentUser);
+        }
+
     }
 
     private void addFriend(User user, ObjectId friendId) {

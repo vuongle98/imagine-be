@@ -102,7 +102,7 @@ public class ConversationServiceImpl implements ConversationService {
     }
 
     @Override
-    public void delete(ObjectId id) {
+    public void delete(ObjectId id, boolean forever) {
 
     }
 }
