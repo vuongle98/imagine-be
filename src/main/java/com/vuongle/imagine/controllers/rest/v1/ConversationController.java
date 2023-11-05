@@ -7,6 +7,9 @@ import com.vuongle.imagine.services.core.chat.command.CreateConversationCommand;
 import com.vuongle.imagine.services.core.chat.command.UpdateConversationCommand;
 import com.vuongle.imagine.services.core.chat.impl.ConversationServiceImpl;
 import com.vuongle.imagine.utils.Context;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +18,10 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/conversations")
+@Tag(
+        name = "Conversation",
+        description = "CRUD REST APIs for conversation"
+)
 public class ConversationController {
 
     private final ConversationRepository conversationRepository;
@@ -28,7 +35,7 @@ public class ConversationController {
 
     @PostMapping()
     public ResponseEntity<Conversation> create(
-            @RequestBody CreateConversationCommand command
+            @RequestBody @Valid CreateConversationCommand command
     ) {
 
         Conversation conversation = conversationService.create(command);
@@ -36,9 +43,12 @@ public class ConversationController {
     }
 
     @PutMapping("/{id}")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
     public ResponseEntity<Conversation> update(
             @PathVariable(value = "id") ObjectId id,
-            @RequestBody UpdateConversationCommand command
+            @RequestBody @Valid UpdateConversationCommand command
     ) {
         command.setId(id);
         Conversation conversation = conversationService.update(command);
@@ -46,6 +56,9 @@ public class ConversationController {
     }
 
     @GetMapping
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
     public ResponseEntity<Page<Conversation>> findAll(Pageable pageable) {
         User user = Context.getUser();
         if (user == null) {

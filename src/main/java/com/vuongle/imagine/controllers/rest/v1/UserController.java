@@ -4,17 +4,16 @@ import com.vuongle.imagine.dto.auth.UserProfile;
 import com.vuongle.imagine.models.PlayingQuizHistory;
 import com.vuongle.imagine.models.User;
 import com.vuongle.imagine.repositories.UserRepository;
-import com.vuongle.imagine.services.core.auth.UserService;
 import com.vuongle.imagine.services.core.auth.impl.UserServiceImpl;
 import com.vuongle.imagine.services.share.auth.impl.UserQueryServiceImpl;
-import com.vuongle.imagine.services.share.auth.query.UserQuery;
 import com.vuongle.imagine.services.share.quiz.PlayingQuizHistoryQueryService;
 import com.vuongle.imagine.services.share.quiz.query.PlayingQuizHistoryQuery;
 import com.vuongle.imagine.utils.Context;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ContentDisposition;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +22,10 @@ import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/user")
+@Tag(
+        name = "User",
+        description = "CRUD REST APIs for user"
+)
 public class UserController {
 
 
@@ -48,6 +51,9 @@ public class UserController {
 
     @GetMapping("/playing-quiz-history")
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
     public ResponseEntity<Page<PlayingQuizHistory>> getHistory(
             PlayingQuizHistoryQuery quizHistoryQuery,
             Pageable pageable
@@ -60,6 +66,9 @@ public class UserController {
 
     @GetMapping("/profile")
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
     public ResponseEntity<UserProfile> getProfile(
             @RequestParam("username") String username
     ) {
@@ -98,6 +107,9 @@ public class UserController {
 
     @PutMapping("/add-friend")
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
     public ResponseEntity<UserProfile> addFriend(
             @RequestParam("friend-id") ObjectId friendId
     ) {
@@ -108,6 +120,9 @@ public class UserController {
 
     @PutMapping("/accept-friend")
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
     public ResponseEntity<UserProfile> acceptFriend(
             @RequestParam("friend-id") ObjectId friendId
     ) {
@@ -118,6 +133,9 @@ public class UserController {
 
     @PutMapping("/decline-friend")
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
     public ResponseEntity<UserProfile> declineFriend(
             @RequestParam("friend-id") ObjectId friendId
     ) {
@@ -128,6 +146,9 @@ public class UserController {
 
     @PutMapping("/remove-friend")
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
     public ResponseEntity<UserProfile> removeFriend(
             @RequestParam("friend-id") ObjectId friendId
     ) {

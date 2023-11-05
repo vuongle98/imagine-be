@@ -1,7 +1,7 @@
 package com.vuongle.imagine.services.share.quiz.query;
 
-import com.vuongle.imagine.constants.QuizCategory;
 import com.vuongle.imagine.constants.QuestionType;
+import com.vuongle.imagine.constants.QuizCategory;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

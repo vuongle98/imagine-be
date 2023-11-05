@@ -3,6 +3,8 @@ package com.vuongle.imagine.controllers.admin.v1;
 import com.vuongle.imagine.models.File;
 import com.vuongle.imagine.services.core.storage.FileService;
 import com.vuongle.imagine.services.share.storage.FileQueryService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -18,6 +20,10 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/api/admin/file")
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowCredentials="true")
+@Tag(
+        name = "ADMIN - file",
+        description = "CRUD REST APIs for admin manage file"
+)
 public class AdminFileServiceController {
 
     private final FileQueryService fileQueryService;
@@ -37,6 +43,9 @@ public class AdminFileServiceController {
 
     @PostMapping("/upload")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MODERATOR')")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
     public ResponseEntity<File> upload(
             @RequestParam(value = "file")MultipartFile file
             ) {
@@ -46,6 +55,9 @@ public class AdminFileServiceController {
 
     @GetMapping("/download")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MODERATOR')")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
     public ResponseEntity<Resource> download(
             @RequestParam(value = "file-path") String filePath
     ) throws IOException {
@@ -73,6 +85,13 @@ public class AdminFileServiceController {
 
     @GetMapping("/download-byte")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MODERATOR')")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
+    @Tag(
+            name = "ADMIN - file",
+            description = "CRUD REST APIs for admin manage file"
+    )
     public ResponseEntity<byte[]> downloadAsByteArray(
             @RequestParam(value = "file-path") String filePath
     ) throws IOException {

@@ -1,6 +1,5 @@
 package com.vuongle.imagine.dto.quiz;
 
-import com.vuongle.imagine.models.Question;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

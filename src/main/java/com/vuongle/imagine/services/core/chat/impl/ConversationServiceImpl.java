@@ -1,7 +1,9 @@
 package com.vuongle.imagine.services.core.chat.impl;
 
 import com.vuongle.imagine.constants.ChatType;
-import com.vuongle.imagine.constants.UserRole;
+import com.vuongle.imagine.exceptions.DataFormatException;
+import com.vuongle.imagine.exceptions.UnAuthorizationException;
+import com.vuongle.imagine.exceptions.UserNotFoundException;
 import com.vuongle.imagine.models.Conversation;
 import com.vuongle.imagine.models.User;
 import com.vuongle.imagine.repositories.ConversationRepository;
@@ -33,7 +35,7 @@ public class ConversationServiceImpl implements ConversationService {
         User user = Context.getUser();
 
         if (Objects.isNull(user)) {
-            throw new RuntimeException("User not found");
+            throw new UserNotFoundException("User not found");
         }
 
         command.getAddMemberIds().add(user.getId());
@@ -60,13 +62,13 @@ public class ConversationServiceImpl implements ConversationService {
                 if (command.getAddMemberIds().size() == 2) {
                     conversation.setMembers(command.getAddMemberIds());
                 } else {
-                    throw new RuntimeException("Not over 2 members on private chat");
+                    throw new DataFormatException("Not over 2 members on private chat");
                 }
             }
             case PUBLIC -> {
 
                 if (!user.isAdmin() || !user.isModerator()) {
-                    throw new RuntimeException("Not admin or moderator");
+                    throw new UnAuthorizationException("Not admin or moderator");
                 }
 
                 conversation.setType(ChatType.PUBLIC);

@@ -1,11 +1,13 @@
 package com.vuongle.imagine.controllers.socket.v1;
 
 import com.vuongle.imagine.constants.ChatType;
+import com.vuongle.imagine.exceptions.DataFormatException;
+import com.vuongle.imagine.exceptions.DataNotFoundException;
+import com.vuongle.imagine.exceptions.UnAuthorizationException;
 import com.vuongle.imagine.models.ChatMessage;
 import com.vuongle.imagine.models.User;
 import com.vuongle.imagine.models.embeded.Sender;
 import com.vuongle.imagine.repositories.MessageRepository;
-import com.vuongle.imagine.utils.Context;
 import org.bson.types.ObjectId;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -14,10 +16,8 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.Instant;
-import java.util.List;
 
 @Controller
 public class ChatController {
@@ -39,7 +39,7 @@ public class ChatController {
             chatMessage.setSender(new Sender("anonymous", "anonymous"));
             chatMessage.setTimeStamp(Instant.now());
             return chatMessage;
-//            throw new RuntimeException("No authentication");
+//            throw new UnAuthorizationException("No authentication");
         }
 
         if (authenticationToken.getPrincipal() instanceof String username) {
@@ -56,7 +56,7 @@ public class ChatController {
         }
 
         if (chatMessage.getSender() == null) {
-            throw new RuntimeException("No sender");
+            throw new DataNotFoundException("No sender");
         }
 
         messageRepository.save(chatMessage);
@@ -74,7 +74,7 @@ public class ChatController {
         UsernamePasswordAuthenticationToken authenticationToken = (UsernamePasswordAuthenticationToken) headerAccessor.getUser();
 
         if (authenticationToken == null) {
-            throw new RuntimeException("No authentication");
+            throw new UnAuthorizationException("No authentication");
         }
 
         if (authenticationToken.getPrincipal() instanceof String username) {
@@ -93,7 +93,7 @@ public class ChatController {
         }
 
         if (chatMessage.getSender() == null) {
-            throw new RuntimeException("No sender");
+            throw new DataFormatException("No sender");
         }
 
         messageRepository.save(chatMessage);

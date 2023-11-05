@@ -10,7 +10,6 @@ import com.vuongle.imagine.services.share.quiz.query.PlayingQuizHistoryQuery;
 import com.vuongle.imagine.utils.Context;
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;

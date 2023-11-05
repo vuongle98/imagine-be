@@ -6,25 +6,19 @@ import com.vuongle.imagine.models.User;
 import com.vuongle.imagine.models.embeded.Sender;
 import com.vuongle.imagine.repositories.ConversationRepository;
 import com.vuongle.imagine.repositories.MessageRepository;
-import com.vuongle.imagine.services.core.auth.command.UpdateUserCommand;
 import com.vuongle.imagine.services.core.auth.impl.UserServiceImpl;
-import com.vuongle.imagine.services.share.chat.ChatQueryService;
 import com.vuongle.imagine.services.share.chat.impl.ChatQueryServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
@@ -32,11 +26,12 @@ import org.springframework.web.socket.messaging.SessionUnsubscribeEvent;
 
 import java.security.Principal;
 import java.time.Instant;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 
 @Component
+@Slf4j
 public class WebSocketEventListener {
-    private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
 
     @Autowired
     private MessageRepository messageRepository;
@@ -59,7 +54,7 @@ public class WebSocketEventListener {
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
 
-        logger.info("Received a new web socket connection");
+        log.info("Received a new web socket connection");
         User user = getUser(event.getUser());
 
         if (Objects.isNull(user)) {
@@ -173,7 +168,7 @@ public class WebSocketEventListener {
 
         String username = (String) headerAccessor.getSessionAttributes().get("username");
         if (username != null) {
-            logger.info("User Disconnected : " + username);
+            log.info("User Disconnected : " + username);
 
             ChatMessage chatMessage = new ChatMessage();
 //            chatMessage.setType(ChatMessage.MessageType.LEAVE);

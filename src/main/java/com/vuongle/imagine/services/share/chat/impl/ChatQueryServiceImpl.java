@@ -1,6 +1,5 @@
 package com.vuongle.imagine.services.share.chat.impl;
 
-import com.vuongle.imagine.constants.ChatType;
 import com.vuongle.imagine.exceptions.DataNotFoundException;
 import com.vuongle.imagine.models.ChatMessage;
 import com.vuongle.imagine.repositories.MessageRepository;

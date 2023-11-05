@@ -1,12 +1,14 @@
 package com.vuongle.imagine.controllers.admin.v1;
 
 import com.vuongle.imagine.dto.auth.UserProfile;
-import com.vuongle.imagine.models.User;
 import com.vuongle.imagine.services.core.auth.command.RegisterCommand;
 import com.vuongle.imagine.services.core.auth.command.UpdateUserCommand;
 import com.vuongle.imagine.services.core.auth.impl.UserServiceImpl;
 import com.vuongle.imagine.services.share.auth.impl.UserQueryServiceImpl;
 import com.vuongle.imagine.services.share.auth.query.UserQuery;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.bson.types.ObjectId;
@@ -19,6 +21,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/admin/user")
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowCredentials="true")
+@Tag(
+        name = "ADMIN - user",
+        description = "CRUD REST APIs for admin manage user"
+)
 public class AdminUserController {
 
     private final UserServiceImpl userService;
@@ -35,7 +41,13 @@ public class AdminUserController {
 
     @GetMapping()
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MODERATOR')")
-    public ResponseEntity<Object> adminFindAllUser(
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
+    @Operation(
+            summary = "Find user by some condition"
+    )
+    public ResponseEntity<Page<UserProfile>> adminFindAllUser(
             HttpServletRequest request,
             UserQuery userQuery,
             Pageable pageable
@@ -47,7 +59,10 @@ public class AdminUserController {
 
     @PostMapping()
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MODERATOR')")
-    public ResponseEntity<Object> adminCreateUser(
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
+    public ResponseEntity<UserProfile> adminCreateUser(
             HttpServletRequest request,
             @RequestBody @Valid RegisterCommand registerCommand
     ) {
@@ -59,7 +74,10 @@ public class AdminUserController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MODERATOR')")
-    public ResponseEntity<Object> adminUpdateUser(
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
+    public ResponseEntity<UserProfile> adminUpdateUser(
             HttpServletRequest request,
             @PathVariable("id") ObjectId id,
             @RequestBody @Valid UpdateUserCommand updateUserCommand
@@ -72,6 +90,9 @@ public class AdminUserController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MODERATOR')")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
     public ResponseEntity<Object> adminDeleteUser(
             HttpServletRequest request,
             @PathVariable("id") ObjectId id,

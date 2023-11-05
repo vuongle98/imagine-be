@@ -6,6 +6,8 @@ import com.vuongle.imagine.models.User;
 import com.vuongle.imagine.services.core.auth.AuthService;
 import com.vuongle.imagine.services.core.auth.command.LoginCommand;
 import com.vuongle.imagine.services.core.auth.command.RegisterCommand;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +15,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = "*", maxAge = 3600)
+@Tag(
+        name = "Auth",
+        description = "CRUD REST APIs for authentication"
+)
 public class AuthController {
 
     private final AuthService authService;
@@ -22,6 +28,9 @@ public class AuthController {
     }
 
     @PostMapping("/token")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
     public ResponseEntity<JwtResponse> login(
             @RequestBody @Valid LoginCommand loginCommand
     ) throws InterruptedException {
@@ -31,6 +40,9 @@ public class AuthController {
     }
 
     @PostMapping("/register")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
     public ResponseEntity<User> signUp(
             @RequestBody @Valid RegisterCommand registerCommand
     ) {
@@ -39,6 +51,9 @@ public class AuthController {
     }
 
     @GetMapping("/verify")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
     public ResponseEntity<UserProfile> verify() {
         UserProfile response = authService.verifyUser();
 

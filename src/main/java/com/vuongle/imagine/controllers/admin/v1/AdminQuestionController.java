@@ -6,6 +6,8 @@ import com.vuongle.imagine.services.core.quiz.command.CreateQuestionCommand;
 import com.vuongle.imagine.services.core.quiz.command.UpdateQuestionCommand;
 import com.vuongle.imagine.services.share.quiz.QuestionQueryService;
 import com.vuongle.imagine.services.share.quiz.query.QuestionQuery;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.bson.types.ObjectId;
@@ -18,6 +20,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/admin/question")
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowCredentials="true")
+@Tag(
+        name = "ADMIN - question",
+        description = "CRUD REST APIs for admin manage question"
+)
 public class AdminQuestionController {
 
     private final QuestionQueryService questionQueryService;
@@ -34,6 +40,9 @@ public class AdminQuestionController {
 
     @GetMapping()
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MODERATOR')")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
     public ResponseEntity<Page<Question>> adminFindAllQuestion(
             HttpServletRequest request,
             QuestionQuery questionQuery,
@@ -46,6 +55,9 @@ public class AdminQuestionController {
 
     @PostMapping()
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MODERATOR')")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
     public ResponseEntity<Question> createQuestion(
             HttpServletRequest request,
             @RequestBody @Valid CreateQuestionCommand createCommand
@@ -57,6 +69,9 @@ public class AdminQuestionController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MODERATOR')")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
     public ResponseEntity<Question> getDetail(
             @PathVariable(value = "id") ObjectId id
     ) throws InterruptedException {
@@ -66,6 +81,9 @@ public class AdminQuestionController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MODERATOR')")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
     public ResponseEntity<Question> updateQuestion(
             @PathVariable(value = "id") ObjectId id,
             @RequestBody @Valid UpdateQuestionCommand updateQuizCommand
@@ -78,6 +96,9 @@ public class AdminQuestionController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MODERATOR')")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
     public ResponseEntity<Void> deleteQuestion(
             @PathVariable(value = "id") ObjectId id
     ) {

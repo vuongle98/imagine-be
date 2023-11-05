@@ -3,6 +3,8 @@ package com.vuongle.imagine.controllers.rest.v1;
 import com.vuongle.imagine.models.File;
 import com.vuongle.imagine.services.core.storage.FileService;
 import com.vuongle.imagine.services.share.storage.FileQueryService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -19,6 +21,10 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/api/file")
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowCredentials="true")
+@Tag(
+        name = "File",
+        description = "CRUD REST APIs for file service"
+)
 public class FileServiceController {
 
     private final FileQueryService fileQueryService;
@@ -38,6 +44,9 @@ public class FileServiceController {
 
     @PostMapping("/upload")
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
     public ResponseEntity<File> upload(
             @RequestParam(value = "file")MultipartFile file
             ) {
@@ -47,6 +56,9 @@ public class FileServiceController {
 
     @GetMapping("/download/{id}")
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
     public ResponseEntity<Object> download(
             @PathVariable(value = "id") ObjectId id,
             @RequestParam(value = "get-byte", required = false) boolean getByte
@@ -78,6 +90,9 @@ public class FileServiceController {
 
     @GetMapping("/download")
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
     public ResponseEntity<Resource> download(
             @RequestParam(value = "file-path") String filePath
     ) throws IOException {
@@ -105,6 +120,9 @@ public class FileServiceController {
 
     @GetMapping("/download-byte")
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
     public ResponseEntity<byte[]> downloadAsByteArray(
             @RequestParam(value = "file-path") String filePath
     ) throws IOException {

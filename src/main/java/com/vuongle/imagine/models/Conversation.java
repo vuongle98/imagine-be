@@ -1,18 +1,17 @@
 package com.vuongle.imagine.models;
 
 import com.vuongle.imagine.constants.ChatType;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 
 @Data
@@ -22,23 +21,36 @@ import java.util.Objects;
 public class Conversation {
 
     @Id
+    @NotNull
     private ObjectId id;
 
+    @NotNull
     private String name;
 
-    private List<ObjectId> members;
+    @NotNull
+    private List<ObjectId> members = new ArrayList<>();
 
+    @NotNull
     private ChatType type = ChatType.PRIVATE;
 
     private boolean deleted;
+
     @LastModifiedDate
     private Instant timeStamp;
 
-    public void addMember(ObjectId memberId) {
+    @CreatedBy
+    private String createdBy;
 
-        if (Objects.isNull(members)) {
-            members = new ArrayList<>();
-        }
+    @CreatedDate
+    private Instant createdAt;
+
+    @LastModifiedDate
+    private Instant lastModifiedDate;
+
+    @LastModifiedBy
+    private String lastModifiedBy;
+
+    public void addMember(ObjectId memberId) {
 
         if (type.equals(ChatType.PRIVATE) && members.size() == 2) {
             return;
@@ -52,10 +64,6 @@ public class Conversation {
     }
 
     public void addAllMembers(List<ObjectId> members) {
-        if (Objects.isNull(this.members)) {
-            this.members = new ArrayList<>();
-        }
-
         members.forEach(this::addMember);
     }
 

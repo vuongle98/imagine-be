@@ -3,6 +3,7 @@ package com.vuongle.imagine.models;
 import com.vuongle.imagine.constants.QuizCategory;
 import com.vuongle.imagine.constants.QuizLevel;
 import com.vuongle.imagine.dto.crawl.NeedCrawlData;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,16 +28,20 @@ import java.util.List;
 public class Quiz implements Serializable {
 
     @Id
+    @NotNull
     private ObjectId id;
 
+    @NotNull
     private List<ObjectId> listQuestionId;
 
     private List<Question> questions;
 
     @Size(min = 2, max = 100, message = "The title must be between 2 and 100 messages.")
+    @NotNull
     private String title;
 
     @Size(max = 500, message = "The description can't be longer than 500 characters.")
+    @NotNull
     private String description;
 
     private String imagePath;
@@ -54,10 +59,13 @@ public class Quiz implements Serializable {
     @CreatedBy
     private String createdBy;
 
+    @NotNull
     private Integer countDown;
 
+    @NotNull
     private QuizCategory category;
 
+    @NotNull
     private QuizLevel level;
 
     private boolean mark;

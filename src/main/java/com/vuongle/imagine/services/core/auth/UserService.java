@@ -1,7 +1,6 @@
 package com.vuongle.imagine.services.core.auth;
 
 import com.vuongle.imagine.dto.auth.UserProfile;
-import com.vuongle.imagine.models.User;
 import com.vuongle.imagine.services.core.BaseService;
 import com.vuongle.imagine.services.core.auth.command.RegisterCommand;
 import com.vuongle.imagine.services.core.auth.command.UpdateUserCommand;

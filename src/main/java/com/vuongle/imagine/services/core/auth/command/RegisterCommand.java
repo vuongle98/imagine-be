@@ -16,8 +16,9 @@ import java.util.List;
 @Data
 public class RegisterCommand extends LoginCommand implements Serializable {
 
+    @NotNull(message = "Email must be not null")
     private String email;
-//    @NotNull(message = "Username must be not null")
+    @NotNull(message = "Fullname must be not null")
     private String fullName;
 
     private List<UserRole> roles;

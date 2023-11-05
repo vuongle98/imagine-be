@@ -1,6 +1,5 @@
 package com.vuongle.imagine.services.core.quiz.command;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;

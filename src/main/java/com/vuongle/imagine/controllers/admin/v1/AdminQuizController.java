@@ -1,15 +1,15 @@
 package com.vuongle.imagine.controllers.admin.v1;
 
-import com.vuongle.imagine.dto.quiz.QuizResponse;
 import com.vuongle.imagine.dto.quiz.QuizResult;
 import com.vuongle.imagine.dto.quiz.UserCheckQuiz;
 import com.vuongle.imagine.models.Quiz;
 import com.vuongle.imagine.services.core.quiz.QuizService;
 import com.vuongle.imagine.services.core.quiz.command.CreateQuizCommand;
 import com.vuongle.imagine.services.core.quiz.command.UpdateQuizCommand;
-import com.vuongle.imagine.services.share.quiz.QuizQueryService;
 import com.vuongle.imagine.services.share.quiz.impl.QuizQueryServiceImpl;
 import com.vuongle.imagine.services.share.quiz.query.QuizQuery;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
@@ -25,6 +25,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin/quiz")
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowCredentials="true")
+@Tag(
+        name = "ADMIN - Quiz",
+        description = "CRUD REST APIs for admin manage quiz"
+)
 public class AdminQuizController {
 
     private final QuizQueryServiceImpl quizQueryService;
@@ -41,6 +45,9 @@ public class AdminQuizController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MODERATOR')")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
     public ResponseEntity<Page<Quiz>> findPage(
             QuizQuery quizQuery,
             Pageable pageable
@@ -61,6 +68,9 @@ public class AdminQuizController {
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MODERATOR')")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
     public ResponseEntity<Quiz> createQuiz(
             @Valid @RequestBody CreateQuizCommand command
     ) {
@@ -71,6 +81,9 @@ public class AdminQuizController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MODERATOR')")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
     public ResponseEntity<Quiz> getDetail(
             @PathVariable(value = "id") ObjectId id
     ) {
@@ -79,6 +92,9 @@ public class AdminQuizController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MODERATOR')")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
     public ResponseEntity<Quiz> updateQuiz(
             @PathVariable(value = "id") ObjectId id,
             @RequestBody @Valid UpdateQuizCommand updateQuizCommand
@@ -92,6 +108,9 @@ public class AdminQuizController {
 
     @PostMapping("/{id}/answer")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MODERATOR')")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
     public ResponseEntity<QuizResult> answerQuiz(
             @PathVariable(value = "id") ObjectId id,
             @RequestBody @Valid List<UserCheckQuiz> checkQuiz
@@ -103,6 +122,9 @@ public class AdminQuizController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MODERATOR')")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
     public ResponseEntity<Void> deleteQuiz(
             @PathVariable(value = "id") ObjectId id
     ) {

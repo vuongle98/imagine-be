@@ -2,7 +2,12 @@ package com.vuongle.imagine.config;
 
 import com.vuongle.imagine.config.jwt.AuthEntryPointJwt;
 import com.vuongle.imagine.config.jwt.AuthTokenFilter;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.models.media.StringSchema;
 import lombok.RequiredArgsConstructor;
+import org.bson.types.ObjectId;
+import org.springdoc.core.utils.SpringDocUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -17,7 +22,17 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableMethodSecurity
 @RequiredArgsConstructor
+@SecurityScheme(
+        name = "Bearer authentication",
+        type = SecuritySchemeType.HTTP,
+        bearerFormat = "JWT",
+        scheme = "bearer"
+)
 public class WebSecurityConfig {
+
+    static {
+        SpringDocUtils.getConfig().replaceWithSchema(ObjectId.class, new StringSchema());
+    }
 
     private final AuthEntryPointJwt unauthorizedHandler;
 
@@ -30,8 +45,9 @@ public class WebSecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**", "/v3/api-docs/**", "/swagger-ui.html",
-                                "/swagger-ui/**")
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/auth/**", "/v3/api-docs/**", "/swagger-ui.html",
+                                "/swagger-ui/**", "/actuator/**")
                         .permitAll()
                         .requestMatchers("/ws/**")
                         .permitAll()

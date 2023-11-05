@@ -1,7 +1,7 @@
 package com.vuongle.imagine.dto.quiz;
 
-import com.vuongle.imagine.constants.QuizCategory;
 import com.vuongle.imagine.constants.QuestionType;
+import com.vuongle.imagine.constants.QuizCategory;
 import com.vuongle.imagine.models.File;
 import com.vuongle.imagine.models.embeded.BaseAnswer;
 import lombok.AllArgsConstructor;

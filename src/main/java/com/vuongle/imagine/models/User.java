@@ -4,13 +4,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vuongle.imagine.constants.FriendStatus;
 import com.vuongle.imagine.constants.UserRole;
 import com.vuongle.imagine.dto.auth.BaseUser;
+import com.vuongle.imagine.exceptions.DataNotFoundException;
 import com.vuongle.imagine.models.embeded.FriendShipData;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
@@ -47,6 +50,18 @@ public class User extends BaseUser implements Serializable, UserDetails {
     private Instant lastActive;
 
     private List<FriendShipData> friendship;
+
+    @CreatedBy
+    private String createdBy;
+
+    @CreatedDate
+    private Instant createdAt;
+
+    @LastModifiedDate
+    private Instant lastModifiedDate;
+
+    @LastModifiedBy
+    private String lastModifiedBy;
 
     public User(
             String username,
@@ -117,7 +132,7 @@ public class User extends BaseUser implements Serializable, UserDetails {
     public void acceptFriend(ObjectId friendId) {
         // find in friendship
         if (friendship.stream().noneMatch(friend -> friend.getId().equals(friendId))) {
-            throw new RuntimeException("Friend not found");
+            throw new DataNotFoundException("Friend not found");
         }
 
         // nếu đã có pending mới accept
@@ -138,7 +153,7 @@ public class User extends BaseUser implements Serializable, UserDetails {
     public void declineFriend(ObjectId friendId) {
         // find in friendship
         if (friendship.stream().noneMatch(friend -> friend.getId().equals(friendId))) {
-            throw new RuntimeException("Friend not found");
+            throw new DataNotFoundException("Friend not found");
         }
         // bên gửi thì bij huyr
         if (friendship.stream()
@@ -214,6 +229,10 @@ public class User extends BaseUser implements Serializable, UserDetails {
 
     public boolean isModerator() {
         return roles.contains(UserRole.MODERATOR);
+    }
+
+    public boolean hasModifyPermission() {
+        return isModerator() || isAdmin();
     }
 
     private void lockUser(boolean locked) {
