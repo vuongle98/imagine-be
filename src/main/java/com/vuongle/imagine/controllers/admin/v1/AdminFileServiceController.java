@@ -1,12 +1,16 @@
 package com.vuongle.imagine.controllers.admin.v1;
 
+import com.vuongle.imagine.dto.storage.FileDto;
 import com.vuongle.imagine.models.File;
 import com.vuongle.imagine.services.core.storage.FileService;
 import com.vuongle.imagine.services.share.storage.FileQueryService;
+import com.vuongle.imagine.services.share.storage.query.FileQuery;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -108,5 +112,23 @@ public class AdminFileServiceController {
                 .ok()
                 .contentType(MediaType.IMAGE_JPEG)
                 .body(fileResource.getContentAsByteArray());
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MODERATOR')")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
+    @Tag(
+            name = "ADMIN - file",
+            description = "CRUD REST APIs for admin manage file"
+    )
+    public ResponseEntity<Page<FileDto>> searchFile(
+            FileQuery fileQuery,
+            Pageable pageable
+    ) {
+        Page<FileDto> filePageable = fileQueryService.findPage(fileQuery, pageable, FileDto.class);
+
+        return ResponseEntity.ok(filePageable);
     }
 }

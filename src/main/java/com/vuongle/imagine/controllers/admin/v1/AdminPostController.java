@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +46,15 @@ public class AdminPostController {
     ) {
         // log request uri
 
-        Page<PostDto> posts = postQueryService.findPage(postQuery, pageable, PostDto.class);
+        // init lookup
+        AggregationOperation lookUp = Aggregation.lookup(
+                "comment",
+                "_id",
+                "postId",
+                "comments"
+        );
+
+        Page<PostDto> posts = postQueryService.findPage(postQuery, pageable, PostDto.class, lookUp);
 
         return ResponseEntity.ok(posts);
     }
@@ -60,6 +70,21 @@ public class AdminPostController {
         PostDto post = postService.create(command);
 
         return ResponseEntity.ok(post);
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MODERATOR')")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
+    public ResponseEntity<PostDto> findById(
+            @PathVariable(value = "id") ObjectId id
+    ) {
+        // log request uri
+
+        PostDto data = postQueryService.getById(id);
+
+        return ResponseEntity.ok(data);
     }
 
     @PutMapping("/{id}")

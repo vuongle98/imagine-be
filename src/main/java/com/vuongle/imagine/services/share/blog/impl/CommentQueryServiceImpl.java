@@ -1,5 +1,6 @@
 package com.vuongle.imagine.services.share.blog.impl;
 
+import com.vuongle.imagine.dto.blog.CommentDto;
 import com.vuongle.imagine.exceptions.DataNotFoundException;
 import com.vuongle.imagine.models.Comment;
 import com.vuongle.imagine.services.share.blog.CommentQueryService;
@@ -124,5 +125,13 @@ public class CommentQueryServiceImpl implements CommentQueryService {
         }
 
         return criteria;
+    }
+
+    @Override
+    public List<CommentDto> getCommentsByPostId(ObjectId postId) {
+        CommentQuery commentQuery = new CommentQuery();
+        commentQuery.setPostId(postId);
+
+        return findList(commentQuery, CommentDto.class);
     }
 }

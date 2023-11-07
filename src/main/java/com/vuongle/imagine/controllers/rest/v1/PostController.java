@@ -59,6 +59,21 @@ public class PostController {
         return ResponseEntity.ok(createdPost);
     }
 
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
+    public ResponseEntity<PostDto> findById(
+        @PathVariable(value = "id") ObjectId id
+    ) {
+        // log request uri
+
+        PostDto data = postQueryService.getById(id);
+
+        return ResponseEntity.ok(data);
+    }
+
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
     @SecurityRequirement(

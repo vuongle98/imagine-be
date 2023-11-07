@@ -37,6 +37,12 @@ public class Post implements Serializable {
 
     private FileDto file;
 
+    private Instant publishedAt;
+
+    private int numLikes;
+
+    private int numComment;
+
     @NotNull
     private CategoryDto category;
 

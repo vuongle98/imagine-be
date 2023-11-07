@@ -1,5 +1,6 @@
 package com.vuongle.imagine.services.share.storage.query;
 
+import com.vuongle.imagine.constants.CommonFileType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,9 +12,12 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FileQuery implements Serializable {
+
     private ObjectId id;
 
-    private String ext;
+    private CommonFileType type;
 
-    private String contentType;
+    private String likeName;
+
+    private String checksum;
 }

@@ -119,9 +119,7 @@ public class CategoryQueryServiceImpl implements CategoryQueryService {
         }
 
         if (Objects.nonNull(categoryQuery.getGetDeleted())) {
-            if (Context.hasModifyPermission()) {
-                listAndCriteria.add(Criteria.where("deletedAt").exists(categoryQuery.getGetDeleted()));
-            } else {
+            if (!Context.hasModifyPermission()) {
                 listAndCriteria.add(Criteria.where("deletedAt").exists(false));
             }
         }

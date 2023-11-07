@@ -11,6 +11,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
+import java.time.Instant;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -38,4 +40,8 @@ public class PostDto implements Serializable {
 
     @NotNull
     private Creator creator;
+
+    private Instant deletedAt;
+
+    private List<CommentDto> comments;
 }

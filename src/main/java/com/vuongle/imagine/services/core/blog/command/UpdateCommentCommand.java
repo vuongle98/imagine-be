@@ -1,7 +1,6 @@
 package com.vuongle.imagine.services.core.blog.command;
 
 import com.vuongle.imagine.dto.storage.FileDto;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;

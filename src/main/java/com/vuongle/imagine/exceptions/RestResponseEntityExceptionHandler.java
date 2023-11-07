@@ -58,7 +58,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
             errors.add(err.getDefaultMessage());
         }
 
-        ErrorDetails errorResponse = new ErrorDetails("An error occurred", Instant.now(), errors.toString());
+        ErrorDetails errorResponse = new ErrorDetails(errors.toString(), Instant.now(), "An error occurred");
 
         return this.handleExceptionInternal(ex, errorResponse, headers, status, request);
     }

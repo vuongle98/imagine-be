@@ -23,6 +23,8 @@ public class Comment implements Serializable {
     @NotNull
     private ObjectId id;
 
+    private ObjectId parentId;
+
     @NotNull
     private String content;
 

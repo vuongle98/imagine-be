@@ -153,8 +153,8 @@ public class PostServiceImpl implements PostService {
 
         // delete post and its comment
         if (delete && Context.hasModifyPermission()) {
-            postRepository.deleteById(id);
             commentService.deleteByPostId(id, true);
+            postRepository.deleteById(id);
         } else {
             // find post
             post.setDeletedAt(Instant.now());
@@ -175,10 +175,9 @@ public class PostServiceImpl implements PostService {
 
         if (isDelete) {
 
-            postRepository.deleteAllByCategoryId(categoryId);
-
             // delete all comment
             commentService.deleteByCategoryId(categoryId, true);
+            postRepository.deleteAllByCategoryId(categoryId);
 
         } else {
             // set post status is deleted

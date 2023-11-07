@@ -10,6 +10,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
+import java.time.Instant;
 
 @Data
 @AllArgsConstructor
@@ -29,4 +30,8 @@ public class CommentDto implements Serializable {
     private FileDto file;
 
     private ObjectId categoryId;
+
+    private Instant deletedAt;
+
+    private ObjectId parentId;
 }

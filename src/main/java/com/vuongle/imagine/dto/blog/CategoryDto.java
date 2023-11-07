@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
+import java.time.Instant;
 
 @Data
 @AllArgsConstructor
@@ -19,4 +20,6 @@ public class CategoryDto implements Serializable {
     private ObjectId id;
 
     private String name;
+
+    private Instant deletedAt;
 }

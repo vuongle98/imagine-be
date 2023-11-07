@@ -101,8 +101,8 @@ public class CategoryServiceImpl implements CategoryService {
 
         if (delete) {
             // delete category and post relate
-            categoryRepository.deleteById(id);
             postService.deleteByCategoryId(id, true);
+            categoryRepository.deleteById(id);
         } else {
             // find category
             Category category = categoryQueryService.getById(id, Category.class);

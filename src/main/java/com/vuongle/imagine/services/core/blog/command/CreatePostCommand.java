@@ -13,7 +13,7 @@ import org.bson.types.ObjectId;
 @NoArgsConstructor
 public class CreatePostCommand {
 
-    @Size(min = 10, max = 255, message = "Title must be between 10 and 255 characters")
+    @Size(min = 2, max = 255, message = "Title must be between 2 and 255 characters")
     @NotNull
     private String title;
 
