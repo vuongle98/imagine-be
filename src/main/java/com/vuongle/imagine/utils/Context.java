@@ -43,7 +43,7 @@ public class Context {
 
         if (user == null) return null;
 
-        return new Creator(user.getId(), user.getFullName(), user.getRoles());
+        return new Creator(user.getId(), user.getFullName(), user.getUsername(), user.getRoles());
     }
 
     public static boolean hasModifyPermission() {

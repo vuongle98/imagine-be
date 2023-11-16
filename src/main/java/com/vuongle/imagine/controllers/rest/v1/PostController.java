@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/post")
 public class PostController {
@@ -40,6 +42,24 @@ public class PostController {
         // log request uri
 
         Page<PostDto> posts = postQueryService.findPage(postQuery, pageable, PostDto.class);
+
+        return ResponseEntity.ok(posts);
+    }
+
+    @GetMapping("/featured")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'MODERATOR')")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
+    public ResponseEntity<List<PostDto>> findFeaturedPost(
+            PostQuery postQuery,
+            Pageable pageable
+    ) {
+        // log request uri
+
+        postQuery.setFeatured(true);
+
+        List<PostDto> posts = postQueryService.findList(postQuery, PostDto.class);
 
         return ResponseEntity.ok(posts);
     }

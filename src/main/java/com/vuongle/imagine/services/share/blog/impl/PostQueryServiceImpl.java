@@ -181,6 +181,10 @@ public class PostQueryServiceImpl implements PostQueryService {
             listAndCriteria.add(Criteria.where("category._id").in(postQuery.getInCategoryIds()));
         }
 
+        if (Objects.nonNull(postQuery.getFeatured())) {
+            listAndCriteria.add(Criteria.where("featured").is(postQuery.getFeatured()));
+        }
+
         // default is false
         if (Objects.nonNull(postQuery.getGetDeleted())) {
             if (!Context.hasModifyPermission()) {

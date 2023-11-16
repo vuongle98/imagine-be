@@ -43,6 +43,8 @@ public class Post implements Serializable {
 
     private int numComment;
 
+    private boolean featured;
+
     @NotNull
     private CategoryDto category;
 

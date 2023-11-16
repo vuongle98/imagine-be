@@ -20,5 +20,7 @@ public class Creator implements Serializable{
 
     private String fullName;
 
+    private String username;
+
     private Set<UserRole> roles;
 }

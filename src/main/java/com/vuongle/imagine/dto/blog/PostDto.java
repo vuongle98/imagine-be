@@ -43,5 +43,13 @@ public class PostDto implements Serializable {
 
     private Instant deletedAt;
 
+    private Instant createdDate;
+
     private List<CommentDto> comments;
+
+    private int numLikes;
+
+    private int numComment;
+
+    private Boolean featured;
 }

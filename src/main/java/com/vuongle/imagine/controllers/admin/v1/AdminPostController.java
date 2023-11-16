@@ -1,11 +1,13 @@
 package com.vuongle.imagine.controllers.admin.v1;
 
 import com.vuongle.imagine.dto.blog.PostDto;
+import com.vuongle.imagine.models.Post;
 import com.vuongle.imagine.services.core.blog.PostService;
 import com.vuongle.imagine.services.core.blog.command.CreatePostCommand;
 import com.vuongle.imagine.services.core.blog.command.UpdatePostCommand;
 import com.vuongle.imagine.services.share.blog.PostQueryService;
 import com.vuongle.imagine.services.share.blog.query.PostQuery;
+import com.vuongle.imagine.utils.PostFaker;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +19,8 @@ import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin/post")
@@ -130,5 +134,24 @@ public class AdminPostController {
         postService.recoverByCategoryId(id);
 
         return ResponseEntity.ok(null);
+    }
+
+    @GetMapping("/fake-post")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @SecurityRequirement(
+            name = "Bearer authentication"
+    )
+    public ResponseEntity<Integer> fakePost() {
+        // log request uri
+
+        List<CreatePostCommand> posts = PostFaker.fakePosts(1000);
+
+        int count = 0;
+        for (CreatePostCommand post : posts) {
+            postService.create(post);
+            count++;
+        }
+
+        return ResponseEntity.ok(count);
     }
 }

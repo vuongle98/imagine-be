@@ -30,4 +30,6 @@ public class UpdatePostCommand implements Serializable {
     private ObjectId categoryId;
 
     private boolean recover;
+
+    private Boolean featured;
 }

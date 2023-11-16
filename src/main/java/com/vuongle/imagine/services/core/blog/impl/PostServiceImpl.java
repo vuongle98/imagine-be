@@ -127,6 +127,11 @@ public class PostServiceImpl implements PostService {
             hasModified = true;
         }
 
+        if (Objects.nonNull(command.getFeatured())) {
+            post.setFeatured(command.getFeatured());
+            hasModified = true;
+        }
+
         if (Context.hasModifyPermission() && command.isRecover()) {
             post.setDeletedAt(null);
 

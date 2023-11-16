@@ -26,4 +26,6 @@ public class PostQuery implements Serializable {
     private List<ObjectId> inCategoryIds;
 
     private Boolean getDeleted = false;
+
+    private Boolean featured;
 }
