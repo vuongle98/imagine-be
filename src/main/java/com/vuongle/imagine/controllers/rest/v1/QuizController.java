@@ -52,9 +52,7 @@ public class QuizController {
     public ResponseEntity<Page<QuizResponse>> findPage(
             QuizQuery quizQuery,
             Pageable pageable
-    ) throws InterruptedException {
-
-        Thread.sleep(300);
+    ) {
         Page<QuizResponse> quizPage = quizQueryService.findPage(quizQuery, pageable, QuizResponse.class);
 
         return ResponseEntity.ok(quizPage);
@@ -67,8 +65,7 @@ public class QuizController {
     )
     public ResponseEntity<QuizResponse> getDetail(
             @PathVariable(value = "id") ObjectId id
-    ) throws InterruptedException {
-        Thread.sleep(300);
+    ) {
         return ResponseEntity.ok(quizQueryService.getById(id, QuizResponse.class));
     }
 

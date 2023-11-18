@@ -2,6 +2,7 @@ package com.vuongle.imagine.services.share.blog.impl;
 
 import com.vuongle.imagine.dto.blog.PostDto;
 import com.vuongle.imagine.dto.common.CountResult;
+import com.vuongle.imagine.dto.statistic.PostStatistic;
 import com.vuongle.imagine.exceptions.DataNotFoundException;
 import com.vuongle.imagine.models.Post;
 import com.vuongle.imagine.services.share.blog.CommentQueryService;
@@ -149,6 +150,13 @@ public class PostQueryServiceImpl implements PostQueryService {
         }
 
         return 0;
+    }
+
+    @Override
+    public PostStatistic statistic() {
+
+
+        return new PostStatistic();
     }
 
     @Override

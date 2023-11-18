@@ -27,6 +27,8 @@ public class PostDto implements Serializable {
     @NotNull
     private String title;
 
+    private String slug;
+
     @NotNull
     private String description;
 

@@ -16,9 +16,9 @@ import java.util.stream.Stream;
 public class PostFaker {
 
     static List<CategoryDto> categories = List.of(
-            new CategoryDto(new ObjectId("654690401766123ac170252a"), "test1", null),
-            new CategoryDto(new ObjectId("6547aa3d42face30eaa05b73"), "test3", null),
-            new CategoryDto(new ObjectId("654ba40f9090ce6a9f1f5ded"), "test2", null)
+            new CategoryDto(new ObjectId("654690401766123ac170252a"), "test1", "test1", null),
+            new CategoryDto(new ObjectId("6547aa3d42face30eaa05b73"), "test3", "test1", null),
+            new CategoryDto(new ObjectId("654ba40f9090ce6a9f1f5ded"), "test2", "test1", null)
     );
 
 

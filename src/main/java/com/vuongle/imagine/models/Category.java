@@ -26,6 +26,8 @@ public class Category implements Serializable {
     @Indexed(unique = true, sparse = true, name = "unique_name", background = true)
     private String name;
 
+    private String slug;
+
     private Instant deletedAt;
 
     @CreatedBy

@@ -13,6 +13,7 @@ import com.vuongle.imagine.services.core.blog.command.CreateCategoryCommand;
 import com.vuongle.imagine.services.core.blog.command.UpdateCategoryCommand;
 import com.vuongle.imagine.services.share.blog.CategoryQueryService;
 import com.vuongle.imagine.utils.Context;
+import com.vuongle.imagine.utils.StringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
@@ -51,6 +52,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         // map value
         Category category = objectMapper.convertValue(command, Category.class);
+        category.setSlug(StringUtils.toSlug(category.getName()));
 
         category = categoryRepository.save(category);
         return categoryQueryService.getById(category.getId(), CategoryDto.class);
@@ -70,6 +72,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         if (Objects.nonNull(command.getName())) {
             existed.setName(command.getName());
+            existed.setSlug(StringUtils.toSlug(existed.getName()));
 
             modified = true;
         }

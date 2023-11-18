@@ -17,5 +17,6 @@ public class FullStatistic implements Serializable {
     private QuizPlayingStatistic quizPlayingStatistic;
     private ConversationStatistic conversationStatistic;
     private QuestionStatistic questionStatistic;
+    private PostStatistic postStatistic;
 
 }

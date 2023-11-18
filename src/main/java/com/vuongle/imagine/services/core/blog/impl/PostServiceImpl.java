@@ -5,6 +5,7 @@ import com.vuongle.imagine.dto.blog.CategoryDto;
 import com.vuongle.imagine.dto.blog.PostDto;
 import com.vuongle.imagine.dto.common.CommonResult;
 import com.vuongle.imagine.dto.common.Result;
+import com.vuongle.imagine.exceptions.DataFormatException;
 import com.vuongle.imagine.exceptions.DataNotFoundException;
 import com.vuongle.imagine.exceptions.NoPermissionException;
 import com.vuongle.imagine.exceptions.UserNotFoundException;
@@ -19,7 +20,9 @@ import com.vuongle.imagine.services.share.blog.CategoryQueryService;
 import com.vuongle.imagine.services.share.blog.PostQueryService;
 import com.vuongle.imagine.services.share.blog.query.PostQuery;
 import com.vuongle.imagine.utils.Context;
+import com.vuongle.imagine.utils.StringUtils;
 import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -39,6 +42,9 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
 
     private final CommentService commentService;
+
+    @Value("${imagine.app.config-max-fuatured-post}")
+    int maxFeaturedPost;
 
 
     public PostServiceImpl(
@@ -79,6 +85,8 @@ public class PostServiceImpl implements PostService {
 
         post.setCreator(user);
 
+        post.setSlug(StringUtils.toSlug(post.getTitle()));
+
         // save post
         post = postRepository.save(post);
 
@@ -109,6 +117,7 @@ public class PostServiceImpl implements PostService {
 
         if (Objects.nonNull(command.getTitle())) {
             post.setTitle(command.getTitle());
+            post.setSlug(StringUtils.toSlug(command.getTitle()));
             hasModified = true;
         }
 
@@ -128,6 +137,15 @@ public class PostServiceImpl implements PostService {
         }
 
         if (Objects.nonNull(command.getFeatured())) {
+
+            if (command.getFeatured()) {
+                // count featured
+                long count = postRepository.countAllByFeatured();
+
+                if (count >= maxFeaturedPost) {
+                    throw new DataFormatException("Only " + maxFeaturedPost + " post can be featured");
+                }
+            }
             post.setFeatured(command.getFeatured());
             hasModified = true;
         }

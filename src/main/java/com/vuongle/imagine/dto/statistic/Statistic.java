@@ -11,5 +11,5 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class Statistic implements Serializable {
 
-    private Integer totalRows;
+    private Integer totalRows = 0;
 }

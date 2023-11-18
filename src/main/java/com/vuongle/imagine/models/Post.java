@@ -29,6 +29,8 @@ public class Post implements Serializable {
     @Indexed(unique = true, sparse = true, name = "unique_title", background = true)
     private String title;
 
+    private String slug;
+
     @NotNull
     private String description;
 

@@ -51,9 +51,7 @@ public class AdminQuizController {
     public ResponseEntity<Page<Quiz>> findPage(
             QuizQuery quizQuery,
             Pageable pageable
-    ) throws InterruptedException {
-
-        Thread.sleep(300);
+    ) {
         AggregationOperation lookUp = Aggregation.lookup(
                 "question",
                 "listQuestionId",
@@ -98,8 +96,7 @@ public class AdminQuizController {
     public ResponseEntity<Quiz> updateQuiz(
             @PathVariable(value = "id") ObjectId id,
             @RequestBody @Valid UpdateQuizCommand updateQuizCommand
-    ) throws InterruptedException {
-        Thread.sleep(300);
+    ) {
         updateQuizCommand.setId(id);
         Quiz quiz = quizService.updateQuiz(updateQuizCommand);
 

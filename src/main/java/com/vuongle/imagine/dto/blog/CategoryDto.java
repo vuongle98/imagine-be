@@ -21,5 +21,7 @@ public class CategoryDto implements Serializable {
 
     private String name;
 
+    private String slug;
+
     private Instant deletedAt;
 }

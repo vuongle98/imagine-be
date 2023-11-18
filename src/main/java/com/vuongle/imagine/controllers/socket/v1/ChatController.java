@@ -102,8 +102,7 @@ public class ChatController {
 
     @MessageMapping("/chat.sendStringMessage")
     @SendTo("/topic/public")
-    public String sendMessage(@Payload String chatMessage) throws InterruptedException {
-        Thread.sleep(200);
+    public String sendMessage(@Payload String chatMessage) {
         return chatMessage;
     }
 

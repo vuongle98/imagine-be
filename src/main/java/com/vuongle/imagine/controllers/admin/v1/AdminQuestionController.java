@@ -47,8 +47,7 @@ public class AdminQuestionController {
             HttpServletRequest request,
             QuestionQuery questionQuery,
             Pageable pageable
-    ) throws InterruptedException{
-        Thread.sleep(300);
+    ) {
         Page<Question> quizPage = questionQueryService.findPage(questionQuery, pageable, Question.class);
         return ResponseEntity.ok(quizPage);
     }
@@ -74,8 +73,7 @@ public class AdminQuestionController {
     )
     public ResponseEntity<Question> getDetail(
             @PathVariable(value = "id") ObjectId id
-    ) throws InterruptedException {
-        Thread.sleep(300);
+    ) {
         return ResponseEntity.ok(questionQueryService.getById(id, Question.class));
     }
 

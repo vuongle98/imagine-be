@@ -33,8 +33,7 @@ public class AuthController {
     )
     public ResponseEntity<JwtResponse> login(
             @RequestBody @Valid LoginCommand loginCommand
-    ) throws InterruptedException {
-        Thread.sleep(1000);
+    ) {
         JwtResponse response = authService.login(loginCommand);
         return ResponseEntity.ok(response);
     }
